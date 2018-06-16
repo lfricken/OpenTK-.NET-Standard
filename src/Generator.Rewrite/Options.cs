@@ -35,5 +35,12 @@ namespace OpenTK.Rewrite
         [Option("dllimport", Default = false,
             HelpText = "Force native calls to use DllImport instead of GetProcAddress.")]
         public bool UseDLLImport { get; set; }
+
+        /// <summary>
+        /// Toggles rewriting for NetStandard.
+        /// </summary>
+        [Option('n', "netstandard", Default = false,
+            HelpText = "Toggles rewriting for NetStandard.")]
+        public bool IsNetStandard { get; set; }
     }
 }

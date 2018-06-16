@@ -59,8 +59,8 @@ cd opentk                                    # Enter the source directory
 ./build.sh                                   # Build on Mono (Linux / Mac OS X)
 ```
 
-After this is done at least once, you can build OpenTK normally through
-your IDE.
+After this is done at least once, you can build OpenTK.Standard project normally through
+your IDE. This fork is only for building opentk for .Net Standard, and not for .Net Framework.
 
 News
 ====
