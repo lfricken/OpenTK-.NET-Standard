@@ -44,8 +44,11 @@ namespace OpenTK.Platform.Windows
     {
         private const ExtendedWindowStyle ParentStyleEx = ExtendedWindowStyle.WindowEdge | ExtendedWindowStyle.ApplicationWindow;
         private const ExtendedWindowStyle ChildStyleEx = 0;
-
+#if NETSTANDARD
+        private readonly IntPtr Instance = Functions.GetModuleHandle(typeof(WinGLNative).Module.Name);
+#else
         private readonly IntPtr Instance = Marshal.GetHINSTANCE(typeof(WinGLNative).Module);
+#endif
         private readonly IntPtr ClassName = Marshal.StringToHGlobalAuto(Guid.NewGuid().ToString());
         private readonly WindowProcedure WindowProcedureDelegate;
 
@@ -1240,11 +1243,15 @@ namespace OpenTK.Platform.Windows
                             }
                         }
                     }
-
+#if !NETSTANDARD
                     Debug.Assert(oldCursorHandle != IntPtr.Zero);
                     Debug.Assert(oldCursorHandle != cursor_handle);
                     Debug.Assert(oldCursor != cursor);
-
+#else 
+                    System.Diagnostics.Debug.Assert(oldCursorHandle != IntPtr.Zero);
+                    System.Diagnostics.Debug.Assert(oldCursorHandle != cursor_handle);
+                    System.Diagnostics.Debug.Assert(oldCursor != cursor);
+#endif
                     // If we've replaced a custom (non-default) cursor we need to free the handle.
                     if (oldCursor != MouseCursor.Default)
                     {
