@@ -2772,7 +2772,7 @@ namespace OpenTK.Graphics.OpenGL
                 }
             }
         }
-
+#if MINIMAL
         /// <summary>
         /// [requires: v1.0]
         /// Set the viewport. This function assumes a lower left corner of (0, 0).
@@ -2814,7 +2814,7 @@ namespace OpenTK.Graphics.OpenGL
         {
             GL.Viewport(rectangle.X, rectangle.Y, rectangle.Width, rectangle.Height);
         }
-#if MINIMAL
+#else
         /// <summary>
         /// [requires: v1.0]
         /// Set the viewport.
