@@ -717,14 +717,14 @@ namespace OpenTK.Platform.X11
         public int backing_store;
         public IntPtr backing_planes;
         public IntPtr backing_pixel;
-        public bool save_under;
+        public byte save_under;
         public IntPtr colormap;
         public bool map_installed;
         public MapState map_state;
         public IntPtr all_event_masks;
         public IntPtr your_event_mask;
         public IntPtr do_not_propagate_mask;
-        public bool override_direct;
+        public byte override_direct;
         public IntPtr screen;
 
         public override string ToString()
