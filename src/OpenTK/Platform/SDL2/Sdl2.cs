@@ -27,6 +27,7 @@ using System;
 using System.Diagnostics;
 using System.Security;
 using System.Runtime.InteropServices;
+using System.Text;
 
 #pragma warning disable 0169
 
@@ -37,13 +38,31 @@ namespace OpenTK.Platform.SDL2
 
     internal partial class SDL
     {
-        #if ANDROID
-        const string lib = "libSDL2.so";
-        #elif IPHONE
-        const string lib = "__Internal";
-        #else
-        private const string lib = "SDL2.dll";
-        #endif
+        private static NativeLibrary NativeLib = NativeLibrary.Load(GetLibraryName());
+
+        private static string GetLibraryName()
+        {
+#if NETSTANDARD
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                return "SDL2.dll";
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                return "libSDL2-2.0.so.0";
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                return "libsdl2.dylib";
+            }
+            else
+            {
+                return "SDL2.dll";
+            }
+#else
+            return "SDL2.dll";
+#endif
+        }
 
         public readonly static object Sync = new object();
         private static Nullable<Version> version;
@@ -77,70 +96,87 @@ namespace OpenTK.Platform.SDL2
         }
 
         [SuppressUnmanagedCodeSecurity]
-        [DllImport(lib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "SDL_CreateColorCursor", ExactSpelling = true)]
-        public static extern Cursor CreateColorCursor(Surface surface, int hot_x, int hot_y);
+        private delegate Cursor SDL_CreateColorCursor_d(Surface surface, int hot_x, int hot_y);
+        private static SDL_CreateColorCursor_d SDL_CreateColorCursor_ptr = NativeLib.LoadFunctionPointer<SDL_CreateColorCursor_d>("SDL_CreateColorCursor");
+        public static Cursor CreateColorCursor(Surface surface, int hot_x, int hot_y) => SDL_CreateColorCursor_ptr(surface, hot_x, hot_y);
+
 
         [SuppressUnmanagedCodeSecurity]
-        [DllImport(lib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "SDL_FreeCursor", ExactSpelling = true)]
-        public static extern void FreeCursor(Cursor cursor);
+        private delegate void SDL_FreeCursor_d(Cursor cursor);
+        private static SDL_FreeCursor_d SDL_FreeCursor_ptr = NativeLib.LoadFunctionPointer<SDL_FreeCursor_d>("SDL_FreeCursor");
+        public static void FreeCursor(Cursor cursor) => SDL_FreeCursor_ptr(cursor);
 
         [SuppressUnmanagedCodeSecurity]
-        [DllImport(lib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "SDL_GetDefaultCursor", ExactSpelling = true)]
-        public static extern IntPtr GetDefaultCursor();
+        private delegate IntPtr SDL_GetDefaultCursor_d();
+        private static SDL_GetDefaultCursor_d SDL_GetDefaultCursor_ptr = NativeLib.LoadFunctionPointer<SDL_GetDefaultCursor_d>("SDL_GetDefaultCursor");
+        public static IntPtr GetDefaultCursor() => SDL_GetDefaultCursor_ptr();
 
         [SuppressUnmanagedCodeSecurity]
-        [DllImport(lib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "SDL_SetCursor", ExactSpelling = true)]
-        public static extern void SetCursor(Cursor cursor);
+        private delegate void SDL_SetCursor_d(Cursor cursor);
+        private static SDL_SetCursor_d SDL_SetCursor_ptr = NativeLib.LoadFunctionPointer<SDL_SetCursor_d>("SDL_SetCursor");
+        public static void SetCursor(Cursor cursor) => SDL_SetCursor_ptr(cursor);
 
         [SuppressUnmanagedCodeSecurity]
-        [DllImport(lib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "SDL_AddEventWatch", ExactSpelling = true)]
-        public static extern void AddEventWatch(EventFilter filter, IntPtr userdata);
+        private delegate void SDL_AddEventWatch_d(EventFilter filter, IntPtr userdata);
+        private static SDL_AddEventWatch_d SDL_AddEventWatch_ptr = NativeLib.LoadFunctionPointer<SDL_AddEventWatch_d>("SDL_AddEventWatch");
+        public static void AddEventWatch(EventFilter filter, IntPtr userdata) => SDL_AddEventWatch_ptr(filter, userdata);
 
         [SuppressUnmanagedCodeSecurity]
-        [DllImport(lib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "SDL_AddEventWatch", ExactSpelling = true)]
-        public static extern void AddEventWatch(IntPtr filter, IntPtr userdata);
+        private delegate void SDL_AddEventWatch2_d(IntPtr filter, IntPtr userdata);
+        private static SDL_AddEventWatch2_d SDL_AddEventWatch2_ptr = NativeLib.LoadFunctionPointer<SDL_AddEventWatch2_d>("SDL_AddEventWatch");
+        public static void AddEventWatch(IntPtr filter, IntPtr userdata) => SDL_AddEventWatch2_ptr(filter, userdata);
 
         [SuppressUnmanagedCodeSecurity]
-        [DllImport(lib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "SDL_CreateRGBSurfaceFrom", ExactSpelling = true)]
-        public static extern IntPtr CreateRGBSurfaceFrom(IntPtr pixels,
-            int width, int height, int depth, int pitch,
-            uint Rmask, uint Gmask, uint Bmask, uint Amask);
+        private delegate IntPtr SDL_CreateRGBSurfaceFrom_d(IntPtr pixels, int width, int height, int depth, int pitch, uint Rmask, uint Gmask, uint Bmask, uint Amask);
+        private static SDL_CreateRGBSurfaceFrom_d SDL_CreateRGBSurfaceFrom_ptr = NativeLib.LoadFunctionPointer<SDL_CreateRGBSurfaceFrom_d>("SDL_CreateRGBSurfaceFrom");
+        public static IntPtr CreateRGBSurfaceFrom(IntPtr pixels, int width, int height, int depth, int pitch, uint Rmask, uint Gmask, uint Bmask, uint Amask)
+            => SDL_CreateRGBSurfaceFrom_ptr(pixels, width, height, depth, pitch, Rmask, Gmask, Bmask, Amask);
 
         [SuppressUnmanagedCodeSecurity]
-        [DllImport(lib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "SDL_CreateWindow", ExactSpelling = true)]
-        public static extern IntPtr CreateWindow(string title, int x, int y, int w, int h, WindowFlags flags);
+        private delegate IntPtr SDL_CreateWindow_d(string title, int x, int y, int w, int h, WindowFlags flags);
+        private static SDL_CreateWindow_d SDL_CreateWindow_ptr = NativeLib.LoadFunctionPointer<SDL_CreateWindow_d>("SDL_CreateWindow");
+        public static IntPtr CreateWindow(string title, int x, int y, int w, int h, WindowFlags flags)
+            => SDL_CreateWindow_ptr(title, x, y, w, h, flags);
 
         [SuppressUnmanagedCodeSecurity]
-        [DllImport(lib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "SDL_CreateWindowFrom", ExactSpelling = true)]
-        public static extern IntPtr CreateWindowFrom(IntPtr data);
+        private delegate IntPtr SDL_CreateWindowFrom_d(IntPtr data);
+        private static SDL_CreateWindowFrom_d SDL_CreateWindowFrom_ptr = NativeLib.LoadFunctionPointer<SDL_CreateWindowFrom_d>("SDL_CreateWindowFrom");
+        public static IntPtr CreateWindowFrom(IntPtr data) => SDL_CreateWindowFrom_ptr(data);
 
         [SuppressUnmanagedCodeSecurity]
-        [DllImport(lib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "SDL_DelEventWatch", ExactSpelling = true)]
-        public static extern void DelEventWatch(EventFilter filter, IntPtr userdata);
+        private delegate void SDL_DelEventWatch2_d(EventFilter filter, IntPtr userdata);
+        private static SDL_DelEventWatch2_d SDL_DelEventWatch2_ptr = NativeLib.LoadFunctionPointer<SDL_DelEventWatch2_d>("SDL_DelEventWatch");
+        public static void DelEventWatch(EventFilter filter, IntPtr userdata) => SDL_DelEventWatch2_ptr(filter, userdata);
 
         [SuppressUnmanagedCodeSecurity]
-        [DllImport(lib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "SDL_DelEventWatch", ExactSpelling = true)]
-        public static extern void DelEventWatch(IntPtr filter, IntPtr userdata);
+        private delegate void SDL_DelEventWatch_d(IntPtr filter, IntPtr userdata);
+        private static SDL_DelEventWatch_d SDL_DelEventWatch_ptr = NativeLib.LoadFunctionPointer<SDL_DelEventWatch_d>("SDL_DelEventWatch");
+        public static void DelEventWatch(IntPtr filter, IntPtr userdata) => SDL_DelEventWatch_ptr(filter, userdata);
 
         [SuppressUnmanagedCodeSecurity]
-        [DllImport(lib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "SDL_DestroyWindow", ExactSpelling = true)]
-        public static extern void DestroyWindow(IntPtr window);
+        private delegate void SDL_DestroyWindow_d(IntPtr window);
+        private static SDL_DestroyWindow_d SDL_DestroyWindow_ptr = NativeLib.LoadFunctionPointer<SDL_DestroyWindow_d>("SDL_DestroyWindow");
+        public static void DestroyWindow(IntPtr window) => SDL_DestroyWindow_ptr(window);
 
         [SuppressUnmanagedCodeSecurity]
-        [DllImport(lib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "SDL_FreeSurface", ExactSpelling = true)]
-        public static extern void FreeSurface(IntPtr surface);
+        private delegate void SDL_FreeSurface_d(IntPtr surface);
+        private static SDL_FreeSurface_d SDL_FreeSurface_ptr = NativeLib.LoadFunctionPointer<SDL_FreeSurface_d>("SDL_FreeSurface");
+        public static void FreeSurface(IntPtr surface) => SDL_FreeSurface_ptr(surface);
 
         [SuppressUnmanagedCodeSecurity]
-        [DllImport (lib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "SDL_free", ExactSpelling = true)]
-        public static extern void Free(IntPtr memblock);
+        private delegate void SDL_Free_d(IntPtr memblock);
+        private static SDL_Free_d SDL_Free_ptr = NativeLib.LoadFunctionPointer<SDL_Free_d>("SDL_free");
+        public static void Free(IntPtr memblock) => SDL_Free_ptr(memblock);
 
         [SuppressUnmanagedCodeSecurity]
-        [DllImport(lib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "SDL_GameControllerEventState", ExactSpelling = true)]
-        public static extern EventState GameControllerEventState(EventState state);
+        private delegate EventState SDL_GameControllerEventState_d(EventState state);
+        private static SDL_GameControllerEventState_d SDL_GameControllerEventState_ptr = NativeLib.LoadFunctionPointer<SDL_GameControllerEventState_d>("SDL_GameControllerEventState");
+        public static EventState GameControllerEventState(EventState state) => SDL_GameControllerEventState_ptr(state);
 
         [SuppressUnmanagedCodeSecurity]
-        [DllImport(lib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "SDL_GameControllerGetAxis", ExactSpelling = true)]
-        public static extern short GameControllerGetAxis(IntPtr gamecontroller, GameControllerAxis axis);
+        private delegate short SDL_GameControllerGetAxis_d(IntPtr gamecontroller, GameControllerAxis axis);
+        private static SDL_GameControllerGetAxis_d SDL_GameControllerGetAxis_ptr = NativeLib.LoadFunctionPointer<SDL_GameControllerGetAxis_d>("SDL_GameControllerGetAxis");
+        public static short GameControllerGetAxis(IntPtr gamecontroller, GameControllerAxis axis) => SDL_GameControllerGetAxis_ptr(gamecontroller, axis);
 
         /// <summary>
         /// Gets the SDL joystick layer binding for the specified game controller axis
@@ -149,8 +185,10 @@ namespace OpenTK.Platform.SDL2
         /// <param name="axis">A value from the <c>GameControllerAxis</c> enumeration</param>
         /// <returns>A GameControllerButtonBind instance describing the specified binding</returns>
         [SuppressUnmanagedCodeSecurity]
-        [DllImport(lib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "SDL_GameControllerGetBindForAxis", ExactSpelling = true)]
-        public static extern GameControllerButtonBind GameControllerGetBindForAxis(IntPtr gamecontroller, GameControllerAxis axis);
+        private delegate GameControllerButtonBind SDL_GameControllerGetBindForAxis_d(IntPtr gamecontroller, GameControllerAxis axis);
+        private static SDL_GameControllerGetBindForAxis_d SDL_GameControllerGetBindForAxis_ptr = NativeLib.LoadFunctionPointer<SDL_GameControllerGetBindForAxis_d>("SDL_GameControllerGetBindForAxis");
+        public static GameControllerButtonBind GameControllerGetBindForAxis(IntPtr gamecontroller, GameControllerAxis axis)
+            => SDL_GameControllerGetBindForAxis_ptr(gamecontroller, axis);
 
         /// <summary>
         /// Gets the SDL joystick layer binding for the specified game controller button
@@ -159,9 +197,10 @@ namespace OpenTK.Platform.SDL2
         /// <param name="button">A value from the <c>GameControllerButton</c> enumeration</param>
         /// <returns>A GameControllerButtonBind instance describing the specified binding</returns>
         [SuppressUnmanagedCodeSecurity]
-        [DllImport(lib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "SDL_GameControllerGetBindForButton", ExactSpelling = true)]
-        public static extern GameControllerButtonBind GameControllerGetBindForButton(
-            IntPtr gamecontroller, GameControllerButton button);
+        private delegate GameControllerButtonBind SDL_GameControllerGetBindForButton_d(IntPtr gamecontroller, GameControllerButton button);
+        private static SDL_GameControllerGetBindForButton_d SDL_GameControllerGetBindForButton_ptr = NativeLib.LoadFunctionPointer<SDL_GameControllerGetBindForButton_d>("SDL_GameControllerGetBindForButton");
+        public static GameControllerButtonBind GameControllerGetBindForButton(IntPtr gamecontroller, GameControllerButton button)
+            => SDL_GameControllerGetBindForButton_ptr(gamecontroller, button);
 
         /// <summary>
         /// Gets the current state of a button on a game controller.
@@ -170,8 +209,10 @@ namespace OpenTK.Platform.SDL2
         /// <param name="button">A zero-based <c>GameControllerButton</c> value.</param>
         /// <returns><c>true</c> if the specified button is pressed; <c>false</c> otherwise.</returns>
         [SuppressUnmanagedCodeSecurity]
-        [DllImport(lib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "SDL_GameControllerGetButton", ExactSpelling = true)]
-        public static extern bool GameControllerGetButton(IntPtr gamecontroller, GameControllerButton button);
+        private delegate bool SDL_GameControllerGetButton_d(IntPtr gamecontroller, GameControllerButton button);
+        private static SDL_GameControllerGetButton_d SDL_GameControllerGetButton_ptr = NativeLib.LoadFunctionPointer<SDL_GameControllerGetButton_d>("SDL_GameControllerGetButton");
+        public static bool GameControllerGetButton(IntPtr gamecontroller, GameControllerButton button)
+            => SDL_GameControllerGetButton_ptr(gamecontroller, button);
 
         /// <summary>
         /// Retrieve the joystick handle that corresponds to the specified game controller.
@@ -179,16 +220,20 @@ namespace OpenTK.Platform.SDL2
         /// <param name="gamecontroller">A game controller handle previously opened with <c>GameControllerOpen</c>.</param>
         /// <returns>A handle to a joystick, or IntPtr.Zero in case of error. The pointer is owned by the callee. Use <c>SDL.GetError</c> to retrieve error information</returns>
         [SuppressUnmanagedCodeSecurity]
-        [DllImport(lib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "SDL_GameControllerGetJoystick", ExactSpelling = true)]
-        public static extern IntPtr GameControllerGetJoystick(IntPtr gamecontroller);
+        private delegate IntPtr SDL_GameControllerGetJoystick_d(IntPtr gamecontroller);
+        private static SDL_GameControllerGetJoystick_d SDL_GameControllerGetJoystick_ptr = NativeLib.LoadFunctionPointer<SDL_GameControllerGetJoystick_d>("SDL_GameControllerGetJoystick");
+        public static IntPtr GameControllerGetJoystick(IntPtr gamecontroller) => SDL_GameControllerGetJoystick_ptr(gamecontroller);
 
         [SuppressUnmanagedCodeSecurity]
-        [DllImport(lib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "SDL_GetCurrentDisplayMode", ExactSpelling = true)]
-        public static extern int GetCurrentDisplayMode(int displayIndex, out DisplayMode mode);
+        private delegate int SDL_GetCurrentDisplayMode_d(int displayIndex, out DisplayMode mode);
+        private static SDL_GetCurrentDisplayMode_d SDL_GetCurrentDisplayMode_ptr = NativeLib.LoadFunctionPointer<SDL_GetCurrentDisplayMode_d>("SDL_GetCurrentDisplayMode");
+        public static int GetCurrentDisplayMode(int displayIndex, out DisplayMode mode)
+            => SDL_GetCurrentDisplayMode_ptr(displayIndex, out mode);
 
         [SuppressUnmanagedCodeSecurity]
-        [DllImport(lib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "SDL_GameControllerName", ExactSpelling = true)]
-        private static extern IntPtr GameControllerNameInternal(IntPtr gamecontroller);
+        private delegate IntPtr SDL_GameControllerName_d(IntPtr gamecontroller);
+        private static SDL_GameControllerName_d SDL_GameControllerName_ptr = NativeLib.LoadFunctionPointer<SDL_GameControllerName_d>("SDL_GameControllerName");
+        static IntPtr GameControllerNameInternal(IntPtr gamecontroller) => SDL_GameControllerName_ptr(gamecontroller);
 
         /// <summary>
         /// Return the name for an openend game controller instance.
@@ -212,52 +257,64 @@ namespace OpenTK.Platform.SDL2
         /// </param>
         /// <returns>A handle to the game controller instance, or IntPtr.Zero in case of error.</returns>
         [SuppressUnmanagedCodeSecurity]
-        [DllImport(lib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "SDL_GameControllerOpen", ExactSpelling = true)]
-        public static extern IntPtr GameControllerOpen(int joystick_index);
+        private delegate IntPtr SDL_GameControllerOpen_d(int joystick_index);
+        private static SDL_GameControllerOpen_d SDL_GameControllerOpen_ptr = NativeLib.LoadFunctionPointer<SDL_GameControllerOpen_d>("SDL_GameControllerOpen");
+        public static IntPtr GameControllerOpen(int joystick_index) => SDL_GameControllerOpen_ptr(joystick_index);
 
         [SuppressUnmanagedCodeSecurity]
-        [DllImport(lib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "SDL_GetDisplayBounds", ExactSpelling = true)]
-        public static extern int GetDisplayBounds(int displayIndex, out Rect rect);
+        private delegate int SDL_GetDisplayBounds_d(int displayIndex, out Rect rect);
+        private static SDL_GetDisplayBounds_d SDL_GetDisplayBounds_ptr = NativeLib.LoadFunctionPointer<SDL_GetDisplayBounds_d>("SDL_GetDisplayBounds");
+        public static int GetDisplayBounds(int displayIndex, out Rect rect) => SDL_GetDisplayBounds_ptr(displayIndex, out rect);
 
         [SuppressUnmanagedCodeSecurity]
-        [DllImport(lib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "SDL_GetDisplayMode", ExactSpelling = true)]
-        public static extern int GetDisplayMode(int displayIndex, int modeIndex, out DisplayMode mode);
+        private delegate int SDL_GetDisplayMode_d(int displayIndex, int modeIndex, out DisplayMode mode);
+        private static SDL_GetDisplayMode_d SDL_GetDisplayMode_ptr = NativeLib.LoadFunctionPointer<SDL_GetDisplayMode_d>("SDL_GetDisplayMode");
+        public static int GetDisplayMode(int displayIndex, int modeIndex, out DisplayMode mode)
+            => SDL_GetDisplayMode_ptr(displayIndex, modeIndex, out mode);
 
         [SuppressUnmanagedCodeSecurity]
-        [DllImport(lib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "SDL_GetError", ExactSpelling = true)]
-        private static extern IntPtr GetErrorInternal();
+        private delegate IntPtr SDL_GetError_d();
+        private static SDL_GetError_d SDL_GetError_ptr = NativeLib.LoadFunctionPointer<SDL_GetError_d>("SDL_GetError");
+        static IntPtr GetErrorInternal() => SDL_GetError_ptr();
         public static string GetError()
         {
             return IntPtrToString(GetErrorInternal());
         }
 
         [SuppressUnmanagedCodeSecurity]
-        [DllImport(lib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "SDL_GetModState", ExactSpelling = true)]
-        public static extern Keymod GetModState();
+        private delegate Keymod SDL_GetModState_d();
+        private static SDL_GetModState_d SDL_GetModState_ptr = NativeLib.LoadFunctionPointer<SDL_GetModState_d>("SDL_GetModState");
+        public static Keymod GetModState() => SDL_GetModState_ptr();
 
         [SuppressUnmanagedCodeSecurity]
-        [DllImport(lib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "SDL_GetMouseState", ExactSpelling = true)]
-        public static extern ButtonFlags GetMouseState(out int hx, out int hy);
+        private delegate ButtonFlags SDL_GetMouseState_d(out int hx, out int hy);
+        private static SDL_GetMouseState_d SDL_GetMouseState_ptr = NativeLib.LoadFunctionPointer<SDL_GetMouseState_d>("SDL_GetMouseState");
+        public static ButtonFlags GetMouseState(out int hx, out int hy) => SDL_GetMouseState_ptr(out hx, out hy);
 
         [SuppressUnmanagedCodeSecurity]
-        [DllImport(lib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "SDL_GetGlobalMouseState", ExactSpelling = true)]
-        public static extern ButtonFlags GetGlobalMouseState(out int hx, out int hy);
+        private delegate ButtonFlags SDL_GetGlobalMouseState_d(out int hx, out int hy);
+        private static SDL_GetGlobalMouseState_d SDL_GetGlobalMouseState_ptr = NativeLib.LoadFunctionPointer<SDL_GetGlobalMouseState_d>("SDL_GetGlobalMouseState");
+        public static ButtonFlags GetGlobalMouseState(out int hx, out int hy) => SDL_GetGlobalMouseState_ptr(out hx, out hy);
+        
+        [SuppressUnmanagedCodeSecurity]
+        private delegate int SDL_GetNumDisplayModes_d(int displayIndex);
+        private static SDL_GetNumDisplayModes_d SDL_GetNumDisplayModes_ptr = NativeLib.LoadFunctionPointer<SDL_GetNumDisplayModes_d>("SDL_GetNumDisplayModes");
+        public static int GetNumDisplayModes(int displayIndex) => SDL_GetNumDisplayModes_ptr(displayIndex);
 
         [SuppressUnmanagedCodeSecurity]
-        [DllImport(lib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "SDL_GetNumDisplayModes", ExactSpelling = true)]
-        public static extern int GetNumDisplayModes(int displayIndex);
+        private delegate int SDL_GetNumVideoDisplays_d();
+        private static SDL_GetNumVideoDisplays_d SDL_GetNumVideoDisplays_ptr = NativeLib.LoadFunctionPointer<SDL_GetNumVideoDisplays_d>("SDL_GetNumVideoDisplays");
+        public static int GetNumVideoDisplays() => SDL_GetNumVideoDisplays_ptr();
 
         [SuppressUnmanagedCodeSecurity]
-        [DllImport(lib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "SDL_GetNumVideoDisplays", ExactSpelling = true)]
-        public static extern int GetNumVideoDisplays();
+        private delegate Scancode SDL_GetScancodeFromKey_d(Keycode key);
+        private static SDL_GetScancodeFromKey_d SDL_GetScancodeFromKey_ptr = NativeLib.LoadFunctionPointer<SDL_GetScancodeFromKey_d>("SDL_GetScancodeFromKey");
+        public static Scancode GetScancodeFromKey(Keycode key) => SDL_GetScancodeFromKey_ptr(key);
 
         [SuppressUnmanagedCodeSecurity]
-        [DllImport(lib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "SDL_GetScancodeFromKey", ExactSpelling = true)]
-        public static extern Scancode GetScancodeFromKey(Keycode key);
-
-        [SuppressUnmanagedCodeSecurity]
-        [DllImport(lib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "SDL_GetVersion", ExactSpelling = true)]
-        public static extern void GetVersion(out Version version);
+        private delegate void SDL_GetVersion_d(out Version version);
+        private static SDL_GetVersion_d SDL_GetVersion_ptr = NativeLib.LoadFunctionPointer<SDL_GetVersion_d>("SDL_GetVersion");
+        public static void GetVersion(out Version version) => SDL_GetVersion_ptr(out version);
         public static Version GetVersion()
         {
             Version v;
@@ -266,40 +323,48 @@ namespace OpenTK.Platform.SDL2
         }
 
         [SuppressUnmanagedCodeSecurity]
-        [DllImport(lib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "SDL_GetWindowID", ExactSpelling = true)]
-        public static extern uint GetWindowID(IntPtr window);
+        private delegate uint SDL_GetWindowID_d(IntPtr window);
+        private static SDL_GetWindowID_d SDL_GetWindowID_ptr = NativeLib.LoadFunctionPointer<SDL_GetWindowID_d>("SDL_GetWindowID");
+        public static uint GetWindowID(IntPtr window) => SDL_GetWindowID_ptr(window);
 
         [SuppressUnmanagedCodeSecurity]
-        [DllImport(lib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "SDL_GetWindowPosition", ExactSpelling = true)]
-        public static extern void GetWindowPosition(IntPtr window, out int x, out int y);
+        private delegate void SDL_GetWindowPosition_d(IntPtr window, out int x, out int y);
+        private static SDL_GetWindowPosition_d SDL_GetWindowPosition_ptr = NativeLib.LoadFunctionPointer<SDL_GetWindowPosition_d>("SDL_GetWindowPosition");
+        public static void GetWindowPosition(IntPtr window, out int x, out int y) => SDL_GetWindowPosition_ptr(window, out x, out y);
 
         [SuppressUnmanagedCodeSecurity]
-        [DllImport(lib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "SDL_GetWindowSize", ExactSpelling = true)]
-        public static extern void GetWindowSize(IntPtr window, out int w, out int h);
+        private delegate void SDL_GetWindowSize_d(IntPtr window, out int w, out int h);
+        private static SDL_GetWindowSize_d SDL_GetWindowSize_ptr = NativeLib.LoadFunctionPointer<SDL_GetWindowSize_d>("SDL_GetWindowSize");
+        public static void GetWindowSize(IntPtr window, out int w, out int h) => SDL_GetWindowSize_ptr(window, out w, out h);
 
         [SuppressUnmanagedCodeSecurity]
-        [DllImport(lib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "SDL_GetWindowTitle", ExactSpelling = true)]
-        private static extern IntPtr GetWindowTitlePrivate(IntPtr window);
+        private delegate IntPtr SDL_GetWindowTitle_d(IntPtr window);
+        private static SDL_GetWindowTitle_d SDL_GetWindowTitle_ptr = NativeLib.LoadFunctionPointer<SDL_GetWindowTitle_d>("SDL_GetWindowTitle");
+        static IntPtr GetWindowTitlePrivate(IntPtr window) => SDL_GetWindowTitle_ptr(window);
         public static string GetWindowTitle(IntPtr window)
         {
             return Marshal.PtrToStringAnsi(GetWindowTitlePrivate(window));
         }
 
         [SuppressUnmanagedCodeSecurity]
-        [DllImport(lib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "SDL_HideWindow", ExactSpelling = true)]
-        public static extern void HideWindow(IntPtr window);
+        private delegate void SDL_HideWindow_d(IntPtr window);
+        private static SDL_HideWindow_d SDL_HideWindow_ptr = NativeLib.LoadFunctionPointer<SDL_HideWindow_d>("SDL_HideWindow");
+        public static void HideWindow(IntPtr window) => SDL_HideWindow_ptr(window);
 
         [SuppressUnmanagedCodeSecurity]
-        [DllImport(lib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "SDL_DisableScreenSaver", ExactSpelling = true)]
-        public static extern void DisableScreenSaver();
+        private delegate void SDL_DisableScreenSaver_d();
+        private static SDL_DisableScreenSaver_d SDL_DisableScreenSaver_ptr = NativeLib.LoadFunctionPointer<SDL_DisableScreenSaver_d>("SDL_DisableScreenSaver");
+        public static void DisableScreenSaver() => SDL_DisableScreenSaver_ptr();
+        
+        [SuppressUnmanagedCodeSecurity]
+        private delegate int SDL_Init_d(SystemFlags flags);
+        private static SDL_Init_d SDL_Init_ptr = NativeLib.LoadFunctionPointer<SDL_Init_d>("SDL_Init");
+        public static int Init(SystemFlags flags) => SDL_Init_ptr(flags);
 
         [SuppressUnmanagedCodeSecurity]
-        [DllImport(lib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "SDL_Init", ExactSpelling = true)]
-        public static extern int Init(SystemFlags flags);
-
-        [SuppressUnmanagedCodeSecurity]
-        [DllImport(lib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "SDL_InitSubSystem", ExactSpelling = true)]
-        public static extern int InitSubSystem(SystemFlags flags);
+        private delegate int SDL_InitSubSystem_d(SystemFlags flags);
+        private static SDL_InitSubSystem_d SDL_InitSubSystem_ptr = NativeLib.LoadFunctionPointer<SDL_InitSubSystem_d>("SDL_InitSubSystem");
+        public static int InitSubSystem(SystemFlags flags) => SDL_InitSubSystem_ptr(flags);
 
         /// <summary>
         /// Determines if the specified joystick is supported by the GameController API.
@@ -307,36 +372,44 @@ namespace OpenTK.Platform.SDL2
         /// <returns><c>true</c> if joystick_index is supported by the GameController API; <c>false</c> otherwise.</returns>
         /// <param name="joystick_index">The index of the joystick to check.</param>
         [SuppressUnmanagedCodeSecurity]
-        [DllImport(lib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "SDL_IsGameController", ExactSpelling = true)]
-        public static extern bool IsGameController(int joystick_index);
+        private delegate bool SDL_IsGameController_d(int joystick_index);
+        private static SDL_IsGameController_d SDL_IsGameController_ptr = NativeLib.LoadFunctionPointer<SDL_IsGameController_d>("SDL_IsGameController");
+        public static bool IsGameController(int joystick_index) => SDL_IsGameController_ptr(joystick_index);
 
         [SuppressUnmanagedCodeSecurity]
-        [DllImport(lib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "SDL_JoystickClose", ExactSpelling = true)]
-        public static extern void JoystickClose(IntPtr joystick);
+        private delegate void SDL_JoystickClose_d(IntPtr joystick);
+        private static SDL_JoystickClose_d SDL_JoystickClose_ptr = NativeLib.LoadFunctionPointer<SDL_JoystickClose_d>("SDL_JoystickClose");
+        public static void JoystickClose(IntPtr joystick) => SDL_JoystickClose_ptr(joystick);
 
         [SuppressUnmanagedCodeSecurity]
-        [DllImport(lib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "SDL_JoystickEventState", ExactSpelling = true)]
-        public static extern EventState JoystickEventState(EventState enabled);
+        private delegate EventState SDL_JoystickEventState_d(EventState enabled);
+        private static SDL_JoystickEventState_d SDL_JoystickEventState_ptr = NativeLib.LoadFunctionPointer<SDL_JoystickEventState_d>("SDL_JoystickEventState");
+        public static EventState JoystickEventState(EventState enabled) => SDL_JoystickEventState_ptr(enabled);
 
         [SuppressUnmanagedCodeSecurity]
-        [DllImport(lib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "SDL_JoystickGetAxis", ExactSpelling = true)]
-        public static extern short JoystickGetAxis(IntPtr joystick, int axis);
+        private delegate short SDL_JoystickGetAxis_d(IntPtr joystick, int axis);
+        private static SDL_JoystickGetAxis_d SDL_JoystickGetAxis_ptr = NativeLib.LoadFunctionPointer<SDL_JoystickGetAxis_d>("SDL_JoystickGetAxis");
+        public static short JoystickGetAxis(IntPtr joystick, int axis) => SDL_JoystickGetAxis_ptr(joystick, axis);
 
         [SuppressUnmanagedCodeSecurity]
-        [DllImport(lib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "SDL_JoystickGetButton", ExactSpelling = true)]
-        public static extern byte JoystickGetButton(IntPtr joystick, int button);
+        private delegate byte SDL_JoystickGetButton_d(IntPtr joystick, int button);
+        private static SDL_JoystickGetButton_d SDL_JoystickGetButton_ptr = NativeLib.LoadFunctionPointer<SDL_JoystickGetButton_d>("SDL_JoystickGetButton");
+        public static byte JoystickGetButton(IntPtr joystick, int button) => SDL_JoystickGetButton_ptr(joystick, button);
 
         [SuppressUnmanagedCodeSecurity]
-        [DllImport(lib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "SDL_JoystickGetGUID", ExactSpelling = true)]
-        public static extern JoystickGuid JoystickGetGUID(IntPtr joystick);
+        private delegate JoystickGuid SDL_JoystickGetGUID_d(IntPtr joystick);
+        private static SDL_JoystickGetGUID_d SDL_JoystickGetGUID_ptr = NativeLib.LoadFunctionPointer<SDL_JoystickGetGUID_d>("SDL_JoystickGetGUID");
+        public static JoystickGuid JoystickGetGUID(IntPtr joystick) => SDL_JoystickGetGUID_ptr(joystick);
 
         [SuppressUnmanagedCodeSecurity]
-        [DllImport(lib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "SDL_JoystickInstanceID", ExactSpelling = true)]
-        public static extern int JoystickInstanceID(IntPtr joystick);
-
+        private delegate JoystickGuid SDL_JoystickInstanceID_d(IntPtr joystick);
+        private static SDL_JoystickInstanceID_d SDL_JoystickInstanceID_ptr = NativeLib.LoadFunctionPointer<SDL_JoystickInstanceID_d>("SDL_JoystickInstanceID");
+        public static JoystickGuid JoystickInstanceID(IntPtr joystick) => SDL_JoystickInstanceID_ptr(joystick);
+        
         [SuppressUnmanagedCodeSecurity]
-        [DllImport(lib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "SDL_JoystickName", ExactSpelling = true)]
-        private static extern IntPtr JoystickNameInternal(IntPtr joystick);
+        private delegate IntPtr SDL_JoystickName_d(IntPtr joystick);
+        private static SDL_JoystickName_d SDL_JoystickName_ptr = NativeLib.LoadFunctionPointer<SDL_JoystickName_d>("SDL_JoystickName");
+        static IntPtr JoystickNameInternal(IntPtr joystick) => SDL_JoystickName_ptr(joystick);
         public static string JoystickName(IntPtr joystick)
         {
             unsafe
@@ -346,40 +419,49 @@ namespace OpenTK.Platform.SDL2
         }
 
         [SuppressUnmanagedCodeSecurity]
-        [DllImport(lib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "SDL_JoystickNumAxes", ExactSpelling = true)]
-        public static extern int JoystickNumAxes(IntPtr joystick);
+        private delegate int SDL_JoystickNumAxes_d(IntPtr joystick);
+        private static SDL_JoystickNumAxes_d SDL_JoystickNumAxes_ptr = NativeLib.LoadFunctionPointer<SDL_JoystickNumAxes_d>("SDL_JoystickNumAxes");
+        public static int JoystickNumAxes(IntPtr joystick) => SDL_JoystickNumAxes_ptr(joystick);
 
         [SuppressUnmanagedCodeSecurity]
-        [DllImport(lib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "SDL_JoystickNumBalls", ExactSpelling = true)]
-        public static extern int JoystickNumBalls(IntPtr joystick);
+        private delegate int SDL_JoystickNumBalls_d(IntPtr joystick);
+        private static SDL_JoystickNumBalls_d SDL_JoystickNumBalls_ptr = NativeLib.LoadFunctionPointer<SDL_JoystickNumBalls_d>("SDL_JoystickNumBalls");
+        public static int JoystickNumBalls(IntPtr joystick) => SDL_JoystickNumBalls_ptr(joystick);
 
         [SuppressUnmanagedCodeSecurity]
-        [DllImport(lib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "SDL_JoystickNumButtons", ExactSpelling = true)]
-        public static extern int JoystickNumButtons(IntPtr joystick);
+        private delegate int SDL_JoystickNumButtons_d(IntPtr joystick);
+        private static SDL_JoystickNumButtons_d SDL_JoystickNumButtons_ptr = NativeLib.LoadFunctionPointer<SDL_JoystickNumButtons_d>("SDL_JoystickNumButtons");
+        public static int JoystickNumButtons(IntPtr joystick) => SDL_JoystickNumButtons_ptr(joystick);
 
         [SuppressUnmanagedCodeSecurity]
-        [DllImport(lib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "SDL_JoystickNumHats", ExactSpelling = true)]
-        public static extern int JoystickNumHats(IntPtr joystick);
+        private delegate int SDL_JoystickNumHats_d(IntPtr joystick);
+        private static SDL_JoystickNumHats_d SDL_JoystickNumHats_ptr = NativeLib.LoadFunctionPointer<SDL_JoystickNumHats_d>("SDL_JoystickNumHats");
+        public static int JoystickNumHats(IntPtr joystick) => SDL_JoystickNumHats_ptr(joystick);
 
         [SuppressUnmanagedCodeSecurity]
-        [DllImport(lib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "SDL_JoystickOpen", ExactSpelling = true)]
-        public static extern IntPtr JoystickOpen(int device_index);
+        private delegate IntPtr SDL_JoystickOpen_d(int device_index);
+        private static SDL_JoystickOpen_d SDL_JoystickOpen_ptr = NativeLib.LoadFunctionPointer<SDL_JoystickOpen_d>("SDL_JoystickOpen");
+        public static IntPtr JoystickOpen(int device_index) => SDL_JoystickOpen_ptr(device_index);
 
         [SuppressUnmanagedCodeSecurity]
-        [DllImport(lib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "SDL_JoystickUpdate", ExactSpelling = true)]
-        public static extern void JoystickUpdate();
+        private delegate void SDL_JoystickUpdate_d();
+        private static SDL_JoystickUpdate_d SDL_JoystickUpdate_ptr = NativeLib.LoadFunctionPointer<SDL_JoystickUpdate_d>("SDL_JoystickUpdate");
+        public static void JoystickUpdate() => SDL_JoystickUpdate_ptr();
 
         [SuppressUnmanagedCodeSecurity]
-        [DllImport(lib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "SDL_MaximizeWindow", ExactSpelling = true)]
-        public static extern void MaximizeWindow(IntPtr window);
+        private delegate void SDL_MaximizeWindow_d(IntPtr window);
+        private static SDL_MaximizeWindow_d SDL_MaximizeWindow_ptr = NativeLib.LoadFunctionPointer<SDL_MaximizeWindow_d>("SDL_MaximizeWindow");
+        public static void MaximizeWindow(IntPtr window) => SDL_MaximizeWindow_ptr(window);
 
         [SuppressUnmanagedCodeSecurity]
-        [DllImport(lib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "SDL_MinimizeWindow", ExactSpelling = true)]
-        public static extern void MinimizeWindow(IntPtr window);
+        private delegate void SDL_MinimizeWindow_d(IntPtr window);
+        private static SDL_MinimizeWindow_d SDL_MinimizeWindow_ptr = NativeLib.LoadFunctionPointer<SDL_MinimizeWindow_d>("SDL_MinimizeWindow");
+        public static void MinimizeWindow(IntPtr window) => SDL_MinimizeWindow_ptr(window);
 
         [SuppressUnmanagedCodeSecurity]
-        [DllImport(lib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "SDL_NumJoysticks", ExactSpelling = true)]
-        public static extern int NumJoysticks();
+        private delegate int SDL_NumJoysticks_d();
+        private static SDL_NumJoysticks_d SDL_NumJoysticks_ptr = NativeLib.LoadFunctionPointer<SDL_NumJoysticks_d>("SDL_NumJoysticks");
+        public static int NumJoysticks() => SDL_NumJoysticks_ptr();
 
         public static int PeepEvents(ref Event e, EventAction action, EventType min, EventType max)
         {
@@ -405,7 +487,7 @@ namespace OpenTK.Platform.SDL2
 
             unsafe
             {
-                fixed (Event *pe = e)
+                fixed (Event* pe = e)
                 {
                     return PeepEvents(pe, count, action, min, max);
                 }
@@ -413,86 +495,107 @@ namespace OpenTK.Platform.SDL2
         }
 
         [SuppressUnmanagedCodeSecurity]
-        [DllImport(lib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "SDL_PeepEvents", ExactSpelling = true)]
-        private unsafe static extern int PeepEvents(Event* e, int count, EventAction action, EventType min, EventType max);
+        private unsafe delegate int SDL_PeepEvents_d(Event* e, int count, EventAction action, EventType min, EventType max);
+        private static SDL_PeepEvents_d SDL_PeepEvents_ptr = NativeLib.LoadFunctionPointer<SDL_PeepEvents_d>("SDL_PeepEvents");
+        unsafe static int PeepEvents(Event* e, int count, EventAction action, EventType min, EventType max)
+            => SDL_PeepEvents_ptr(e, count, action, min, max);
 
 
         [SuppressUnmanagedCodeSecurity]
-        [DllImport(lib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "SDL_PixelFormatEnumToMasks", ExactSpelling = true)]
-        public static extern bool PixelFormatEnumToMasks(uint format, out int bpp,
-            out uint rmask, out uint gmask, out uint bmask, out uint amask);
+        private delegate bool SDL_PixelFormatEnumToMasks_d(uint format, out int bpp, out uint rmask, out uint gmask, out uint bmask, out uint amask);
+        private static SDL_PixelFormatEnumToMasks_d SDL_PixelFormatEnumToMasks_ptr = NativeLib.LoadFunctionPointer<SDL_PixelFormatEnumToMasks_d>("SDL_PixelFormatEnumToMasks");
+        public static bool PixelFormatEnumToMasks(uint format, out int bpp, out uint rmask, out uint gmask, out uint bmask, out uint amask)
+            => SDL_PixelFormatEnumToMasks_ptr(format, out bpp, out rmask, out gmask, out bmask, out amask);
 
         [SuppressUnmanagedCodeSecurity]
-        [DllImport(lib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "SDL_PollEvent", ExactSpelling = true)]
-        public static extern int PollEvent(out Event e);
+        private delegate int SDL_PollEvent_d(out Event e);
+        private static SDL_PollEvent_d SDL_PollEvent_ptr = NativeLib.LoadFunctionPointer<SDL_PollEvent_d>("SDL_PollEvent");
+        public static int PollEvent(out Event e) => SDL_PollEvent_ptr(out e);
 
         [SuppressUnmanagedCodeSecurity]
-        [DllImport(lib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "SDL_PumpEvents", ExactSpelling = true)]
-        public static extern void PumpEvents();
+        private delegate void SDL_PumpEvents_d();
+        private static SDL_PumpEvents_d SDL_PumpEvents_ptr = NativeLib.LoadFunctionPointer<SDL_PumpEvents_d>("SDL_PumpEvents");
+        public static void PumpEvents() => SDL_PumpEvents_ptr();
 
         [SuppressUnmanagedCodeSecurity]
-        [DllImport(lib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "SDL_PushEvent", ExactSpelling = true)]
-        public static extern int PushEvent(ref Event @event);
+        private delegate int SDL_PushEvent_d(ref Event @event);
+        private static SDL_PushEvent_d SDL_PushEvent_ptr = NativeLib.LoadFunctionPointer<SDL_PushEvent_d>("SDL_PushEvent");
+        public static int PushEvent(ref Event @event) => SDL_PushEvent_ptr(ref @event);
 
         [SuppressUnmanagedCodeSecurity]
-        [DllImport(lib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "SDL_RaiseWindow", ExactSpelling = true)]
-        public static extern void RaiseWindow(IntPtr window);
+        private delegate void SDL_RaiseWindow_d(IntPtr window);
+        private static SDL_RaiseWindow_d SDL_RaiseWindow_ptr = NativeLib.LoadFunctionPointer<SDL_RaiseWindow_d>("SDL_RaiseWindow");
+        public static void RaiseWindow(IntPtr window) => SDL_RaiseWindow_ptr(window);
 
         [SuppressUnmanagedCodeSecurity]
-        [DllImport(lib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "SDL_RestoreWindow", ExactSpelling = true)]
-        public static extern void RestoreWindow(IntPtr window);
+        private delegate void SDL_RestoreWindow_d(IntPtr window);
+        private static SDL_RestoreWindow_d SDL_RestoreWindow_ptr = NativeLib.LoadFunctionPointer<SDL_RestoreWindow_d>("SDL_RestoreWindow");
+        public static void RestoreWindow(IntPtr window) => SDL_RestoreWindow_ptr(window);
 
         [SuppressUnmanagedCodeSecurity]
-        [DllImport(lib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "SDL_SetRelativeMouseMode", ExactSpelling = true)]
-        public static extern int SetRelativeMouseMode(bool enabled);
+        private delegate int SDL_SetRelativeMouseMode_d(bool enabled);
+        private static SDL_SetRelativeMouseMode_d SDL_SetRelativeMouseMode_ptr = NativeLib.LoadFunctionPointer<SDL_SetRelativeMouseMode_d>("SDL_SetRelativeMouseMode");
+        public static int SetRelativeMouseMode(bool enabled) => SDL_SetRelativeMouseMode_ptr(enabled);
 
         [SuppressUnmanagedCodeSecurity]
-        [DllImport(lib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "SDL_SetWindowBordered", ExactSpelling = true)]
-        public static extern void SetWindowBordered(IntPtr window, bool bordered);
+        private delegate void SDL_SetWindowBordered_d(IntPtr window, bool bordered);
+        private static SDL_SetWindowBordered_d SDL_SetWindowBordered_ptr = NativeLib.LoadFunctionPointer<SDL_SetWindowBordered_d>("SDL_SetWindowBordered");
+        public static void SetWindowBordered(IntPtr window, bool bordered) => SDL_SetWindowBordered_ptr(window, bordered);
 
         [SuppressUnmanagedCodeSecurity]
-        [DllImport(lib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "SDL_SetWindowFullscreen", ExactSpelling = true)]
-        public static extern int SetWindowFullscreen(IntPtr window, uint flags);
+        private delegate int SDL_SetWindowFullscreen_d(IntPtr window, uint flags);
+        private static SDL_SetWindowFullscreen_d SDL_SetWindowFullscreen_ptr = NativeLib.LoadFunctionPointer<SDL_SetWindowFullscreen_d>("SDL_SetWindowFullscreen");
+        public static int SetWindowFullscreen(IntPtr window, uint flags) => SDL_SetWindowFullscreen_ptr(window, flags);
 
         [SuppressUnmanagedCodeSecurity]
-        [DllImport(lib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "SDL_SetWindowGrab", ExactSpelling = true)]
-        public static extern void SetWindowGrab(IntPtr window, bool grabbed);
+        private delegate void SDL_SetWindowGrab_d(IntPtr window, bool grabbed);
+        private static SDL_SetWindowGrab_d SDL_SetWindowGrab_ptr = NativeLib.LoadFunctionPointer<SDL_SetWindowGrab_d>("SDL_SetWindowGrab");
+        public static void SetWindowGrab(IntPtr window, bool grabbed) => SDL_SetWindowGrab_ptr(window, grabbed);
 
         [SuppressUnmanagedCodeSecurity]
-        [DllImport(lib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "SDL_SetWindowIcon", ExactSpelling = true)]
-        public static extern void SetWindowIcon(IntPtr window, IntPtr icon);
+        private delegate void SDL_SetWindowIcon_d(IntPtr window, IntPtr icon);
+        private static SDL_SetWindowIcon_d SDL_SetWindowIcon_ptr = NativeLib.LoadFunctionPointer<SDL_SetWindowIcon_d>("SDL_SetWindowIcon");
+        public static void SetWindowIcon(IntPtr window, IntPtr icon) => SDL_SetWindowIcon_ptr(window, icon);
 
         [SuppressUnmanagedCodeSecurity]
-        [DllImport(lib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "SDL_SetWindowPosition", ExactSpelling = true)]
-        public static extern void SetWindowPosition(IntPtr window, int x, int y);
+        private delegate void SDL_SetWindowPosition_d(IntPtr window, int x, int y);
+        private static SDL_SetWindowPosition_d SDL_SetWindowPosition_ptr = NativeLib.LoadFunctionPointer<SDL_SetWindowPosition_d>("SDL_SetWindowPosition");
+        public static void SetWindowPosition(IntPtr window, int x, int y) => SDL_SetWindowPosition_ptr(window, x, y);
 
         [SuppressUnmanagedCodeSecurity]
-        [DllImport(lib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "SDL_SetWindowSize", ExactSpelling = true)]
-        public static extern void SetWindowSize(IntPtr window, int x, int y);
+        private delegate void SDL_SetWindowSize_d(IntPtr window, int x, int y);
+        private static SDL_SetWindowSize_d SDL_SetWindowSize_ptr = NativeLib.LoadFunctionPointer<SDL_SetWindowSize_d>("SDL_SetWindowSize");
+        public static void SetWindowSize(IntPtr window, int x, int y) => SDL_SetWindowSize_ptr(window, x, y);
 
         [SuppressUnmanagedCodeSecurity]
-        [DllImport(lib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "SDL_SetWindowTitle", ExactSpelling = true)]
-        public static extern void SetWindowTitle(IntPtr window, string title);
+        private delegate void SDL_SetWindowTitle_d(IntPtr window, string title);
+        private static SDL_SetWindowTitle_d SDL_SetWindowTitle_ptr = NativeLib.LoadFunctionPointer<SDL_SetWindowTitle_d>("SDL_SetWindowTitle");
+        public static void SetWindowTitle(IntPtr window, string title) => SDL_SetWindowTitle_ptr(window, title);
 
         [SuppressUnmanagedCodeSecurity]
-        [DllImport(lib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "SDL_ShowCursor", ExactSpelling = true)]
-        public static extern int ShowCursor(bool toggle);
+        private delegate int SDL_ShowCursor_d(bool toggle);
+        private static SDL_ShowCursor_d SDL_ShowCursor_ptr = NativeLib.LoadFunctionPointer<SDL_ShowCursor_d>("SDL_ShowCursor");
+        public static int ShowCursor(bool toggle) => SDL_ShowCursor_ptr(toggle);
 
         [SuppressUnmanagedCodeSecurity]
-        [DllImport(lib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "SDL_ShowWindow", ExactSpelling = true)]
-        public static extern void ShowWindow(IntPtr window);
+        private delegate void SDL_ShowWindow_d(IntPtr window);
+        private static SDL_ShowWindow_d SDL_ShowWindow_ptr = NativeLib.LoadFunctionPointer<SDL_ShowWindow_d>("SDL_ShowWindow");
+        public static void ShowWindow(IntPtr window) => SDL_ShowWindow_ptr(window);
 
         [SuppressUnmanagedCodeSecurity]
-        [DllImport(lib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "SDL_WasInit", ExactSpelling = true)]
-        public static extern bool WasInit(SystemFlags flags);
+        private delegate bool SDL_WasInit_d(SystemFlags flags);
+        private static SDL_WasInit_d SDL_WasInit_ptr = NativeLib.LoadFunctionPointer<SDL_WasInit_d>("SDL_WasInit");
+        public static bool WasInit(SystemFlags flags) => SDL_WasInit_ptr(flags);
 
         [SuppressUnmanagedCodeSecurity]
-        [DllImport(lib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "SDL_WarpMouseInWindow", ExactSpelling = true)]
-        public static extern void WarpMouseInWindow(IntPtr window, int x, int y);
+        private delegate void SDL_WarpMouseInWindow_d(IntPtr window, int x, int y);
+        private static SDL_WarpMouseInWindow_d SDL_WarpMouseInWindow_ptr = NativeLib.LoadFunctionPointer<SDL_WarpMouseInWindow_d>("SDL_WarpMouseInWindow");
+        public static void WarpMouseInWindow(IntPtr window, int x, int y) => SDL_WarpMouseInWindow_ptr(window, x, y);
 
         [SuppressUnmanagedCodeSecurity]
-        [DllImport (lib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "SDL_WarpMouseGlobal", ExactSpelling = true)]
-        public static extern void WarpMouseGlobal(int x, int y);
+        private delegate bool SDL_WarpMouseGlobal_d(int x, int y);
+        private static SDL_WarpMouseGlobal_d SDL_WarpMouseGlobal_ptr = NativeLib.LoadFunctionPointer<SDL_WarpMouseGlobal_d>("SDL_WarpMouseGlobal");
+        public static bool WarpMouseGlobal(int x, int y) => SDL_WarpMouseGlobal_ptr(x, y);
 
         /// <summary>
         /// Retrieves driver-dependent window information.
@@ -515,34 +618,41 @@ namespace OpenTK.Platform.SDL2
         }
 
         [SuppressUnmanagedCodeSecurity]
-        [DllImport(lib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "SDL_GetWindowWMInfo", ExactSpelling = true)]
-        private static extern bool GetWindowWMInfoInternal(IntPtr window, ref SysWMInfo info);
+        private delegate bool SDL_GetWindowWMInfo_d(IntPtr window, ref SysWMInfo info);
+        private static SDL_GetWindowWMInfo_d SDL_GetWindowWMInfo_ptr = NativeLib.LoadFunctionPointer<SDL_GetWindowWMInfo_d>("SDL_GetWindowWMInfoInternal");
+        static bool GetWindowWMInfoInternal(IntPtr window, ref SysWMInfo info) => SDL_GetWindowWMInfo_ptr(window, ref info);
 
         public partial class GL
         {
             [SuppressUnmanagedCodeSecurity]
-            [DllImport(lib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "SDL_GL_CreateContext", ExactSpelling = true)]
-            public static extern IntPtr CreateContext(IntPtr window);
+            private delegate IntPtr SDL_GL_CreateContext_d(IntPtr window);
+            private static SDL_GL_CreateContext_d SDL_GL_CreateContext_ptr = NativeLib.LoadFunctionPointer<SDL_GL_CreateContext_d>("SDL_GL_CreateContext");
+            public static IntPtr CreateContext(IntPtr window) => SDL_GL_CreateContext_ptr(window);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport(lib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "SDL_GL_DeleteContext", ExactSpelling = true)]
-            public static extern void DeleteContext(IntPtr context);
+            private delegate void SDL_GL_DeleteContext_d(IntPtr context);
+            private static SDL_GL_DeleteContext_d SDL_GL_DeleteContext_ptr = NativeLib.LoadFunctionPointer<SDL_GL_DeleteContext_d>("SDL_GL_DeleteContext");
+            public static void DeleteContext(IntPtr context) => SDL_GL_DeleteContext_ptr(context);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport(lib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "SDL_GL_GetAttribute", ExactSpelling = true)]
-            public static extern int GetAttribute(ContextAttribute attr, out int value);
+            private delegate int SDL_GL_GetAttribute_d(ContextAttribute attr, out int value);
+            private static SDL_GL_GetAttribute_d SDL_GL_GetAttribute_ptr = NativeLib.LoadFunctionPointer<SDL_GL_GetAttribute_d>("SDL_GL_GetAttribute");
+            public static int GetAttribute(ContextAttribute attr, out int value) => SDL_GL_GetAttribute_ptr(attr, out value);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport(lib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "SDL_GL_GetCurrentContext", ExactSpelling = true)]
-            public static extern IntPtr GetCurrentContext();
+            private delegate IntPtr SDL_GL_GetCurrentContext_d();
+            private static SDL_GL_GetCurrentContext_d SDL_GL_GetCurrentContext_ptr = NativeLib.LoadFunctionPointer<SDL_GL_GetCurrentContext_d>("SDL_GL_GetCurrentContext");
+            public static IntPtr GetCurrentContext() => SDL_GL_GetCurrentContext_ptr();
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport(lib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "SDL_GL_GetDrawableSize", ExactSpelling = true)]
-            public static extern void GetDrawableSize(IntPtr window, out int w, out int h);
+            private delegate void SDL_GL_GetDrawableSize_d(IntPtr window, out int w, out int h);
+            private static SDL_GL_GetDrawableSize_d SDL_GL_GetDrawableSize_ptr = NativeLib.LoadFunctionPointer<SDL_GL_GetDrawableSize_d>("SDL_GL_GetDrawableSize");
+            public static void GetDrawableSize(IntPtr window, out int w, out int h) => SDL_GL_GetDrawableSize_ptr(window, out w, out h);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport(lib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "SDL_GL_GetProcAddress", ExactSpelling = true)]
-            public static extern IntPtr GetProcAddress(IntPtr proc);
+            private delegate IntPtr SDL_GL_GetProcAddress_d(IntPtr proc);
+            private static SDL_GL_GetProcAddress_d SDL_GL_GetProcAddress_ptr = NativeLib.LoadFunctionPointer<SDL_GL_GetProcAddress_d>("SDL_GL_GetProcAddress");
+            public static IntPtr GetProcAddress(IntPtr proc) => SDL_GL_GetProcAddress_ptr(proc);
             public static IntPtr GetProcAddress(string proc)
             {
                 IntPtr p = Marshal.StringToHGlobalAnsi(proc);
@@ -557,16 +667,19 @@ namespace OpenTK.Platform.SDL2
             }
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport(lib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "SDL_GL_GetSwapInterval", ExactSpelling = true)]
-            public static extern int GetSwapInterval();
+            private delegate int SDL_GL_GetSwapInterval_d();
+            private static SDL_GL_GetSwapInterval_d SDL_GL_GetSwapInterval_ptr = NativeLib.LoadFunctionPointer<SDL_GL_GetSwapInterval_d>("SDL_GL_GetSwapInterval");
+            public static int GetSwapInterval() => SDL_GL_GetSwapInterval_ptr();
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport(lib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "SDL_GL_MakeCurrent", ExactSpelling = true)]
-            public static extern int MakeCurrent(IntPtr window, IntPtr context);
+            private delegate int SDL_GL_MakeCurrent_d(IntPtr window, IntPtr context);
+            private static SDL_GL_MakeCurrent_d SDL_GL_MakeCurrent_ptr = NativeLib.LoadFunctionPointer<SDL_GL_MakeCurrent_d>("SDL_GL_MakeCurrent");
+            public static int MakeCurrent(IntPtr window, IntPtr context) => SDL_GL_MakeCurrent_ptr(window, context);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport(lib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "SDL_GL_SetAttribute", ExactSpelling = true)]
-            public static extern int SetAttribute(ContextAttribute attr, int value);
+            private delegate int SDL_GL_SetAttribute_d(ContextAttribute attr, int value);
+            private static SDL_GL_SetAttribute_d SDL_GL_SetAttribute_ptr = NativeLib.LoadFunctionPointer<SDL_GL_SetAttribute_d>("SDL_GL_SetAttribute");
+            public static int SetAttribute(ContextAttribute attr, int value) => SDL_GL_SetAttribute_ptr(attr, value);
             public static int SetAttribute(ContextAttribute attr, ContextFlags value)
             {
                 return SetAttribute(attr, (int)value);
@@ -577,12 +690,14 @@ namespace OpenTK.Platform.SDL2
             }
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport(lib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "SDL_GL_SetSwapInterval", ExactSpelling = true)]
-            public static extern int SetSwapInterval(int interval);
+            private delegate int SDL_GL_SetSwapInterval_d(int interval);
+            private static SDL_GL_SetSwapInterval_d SDL_GL_SetSwapInterval_ptr = NativeLib.LoadFunctionPointer<SDL_GL_SetSwapInterval_d>("SDL_GL_SetSwapInterval");
+            public static int SetSwapInterval(int interval) => SDL_GL_SetSwapInterval_ptr(interval);
 
             [SuppressUnmanagedCodeSecurity]
-            [DllImport(lib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "SDL_GL_SwapWindow", ExactSpelling = true)]
-            public static extern void SwapWindow(IntPtr window);
+            private delegate void SDL_GL_SwapWindow_d(IntPtr window);
+            private static SDL_GL_SwapWindow_d SDL_GL_SwapWindow_ptr = NativeLib.LoadFunctionPointer<SDL_GL_SwapWindow_d>("SDL_GL_SwapWindow");
+            public static void SwapWindow(IntPtr window) => SDL_GL_SwapWindow_ptr(window);
         }
     }
 
