@@ -126,7 +126,7 @@ namespace OpenTK.Platform.Windows
                             deviceDesc = deviceDesc.Substring(deviceDesc.LastIndexOf(';') + 1);
                         }
 
-                        if (!String.IsNullOrEmpty(deviceClass) && deviceClass.ToLower().Equals("mouse"))
+                        if (dev.Type == RawInputDeviceType.MOUSE || !String.IsNullOrEmpty(deviceClass) && deviceClass.ToLower().Equals("mouse"))
                         {
                             if (!rawids.ContainsKey(new ContextHandle(dev.Device)))
                             {
