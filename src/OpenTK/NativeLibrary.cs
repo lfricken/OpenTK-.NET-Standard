@@ -62,7 +62,7 @@ namespace OpenTK
 
         public static NativeLibrary Load(string libraryName)
         {
-#if NETCORE
+#if NETSTANDARD
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 return new WindowsNativeLibrary(libraryName);
