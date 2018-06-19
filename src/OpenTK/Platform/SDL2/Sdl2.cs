@@ -402,9 +402,9 @@ namespace OpenTK.Platform.SDL2
         public static JoystickGuid JoystickGetGUID(IntPtr joystick) => SDL_JoystickGetGUID_ptr(joystick);
 
         [SuppressUnmanagedCodeSecurity]
-        private delegate JoystickGuid SDL_JoystickInstanceID_d(IntPtr joystick);
+        private delegate int SDL_JoystickInstanceID_d(IntPtr joystick);
         private static SDL_JoystickInstanceID_d SDL_JoystickInstanceID_ptr = NativeLib.LoadFunctionPointer<SDL_JoystickInstanceID_d>("SDL_JoystickInstanceID");
-        public static JoystickGuid JoystickInstanceID(IntPtr joystick) => SDL_JoystickInstanceID_ptr(joystick);
+        public static int JoystickInstanceID(IntPtr joystick) => SDL_JoystickInstanceID_ptr(joystick);
         
         [SuppressUnmanagedCodeSecurity]
         private delegate IntPtr SDL_JoystickName_d(IntPtr joystick);
