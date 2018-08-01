@@ -29,6 +29,7 @@ using System.ComponentModel;
 using System.Drawing;
 #endif
 using OpenTK.Graphics;
+using OpenTK.Graphics.Vulkan;
 using OpenTK.Input;
 using OpenTK.Platform;
 
@@ -48,6 +49,55 @@ namespace OpenTK
 
         private bool events;
         private bool previous_cursor_visible = true;
+
+        public unsafe VkResult CreateVulkanSurface(VkInstance instance, out VkSurfaceKHR surface)
+        {
+            IPlatformFactory factory = Factory.Default;
+
+            if (implementation is Platform.Windows.WinGLNative win)
+            {
+                VkWin32SurfaceCreateInfoKHR createInfo = VkWin32SurfaceCreateInfoKHR.New();
+                createInfo.hwnd = win.Handle;
+                createInfo.hinstance = win.Instance;
+
+                return VK.CreateWin32SurfaceKHR(instance, ref createInfo, IntPtr.Zero, out surface);
+            }
+            else if (implementation is Platform.X11.X11GLNative x11)
+            {
+                Platform.X11.X11WindowInfo info = x11.WindowInfo as Platform.X11.X11WindowInfo;
+
+                Graphics.Vulkan.Xlib.Window window = new Graphics.Vulkan.Xlib.Window();
+                window.Value = info.WindowHandle;
+
+                VkXlibSurfaceCreateInfoKHR createInfo = VkXlibSurfaceCreateInfoKHR.New();
+                createInfo.dpy = (Graphics.Vulkan.Xlib.Display*)info.Display;
+                createInfo.window = window;
+
+                return VK.CreateXlibSurfaceKHR(instance, &createInfo, IntPtr.Zero, out surface);
+            }
+            else
+            {
+                //If someone knows how to create a MoltenVK surface, please add it here
+
+                throw new NotImplementedException(implementation.ToString());
+            }
+        }
+
+        public IntPtr[] RequiredVulkanExtensions()
+        {
+            if (implementation is Platform.Windows.WinGLNative win)
+            {
+                return new IntPtr[] { VulkanStrings.VK_KHR_WIN32_SURFACE_EXTENSION_NAME };
+            }
+            else if (implementation is Platform.X11.X11GLNative x11)
+            {
+                return new IntPtr[] { VulkanStrings.VK_KHR_XLIB_SURFACE_EXTENSION_NAME };
+            }
+            else
+            {
+                throw new NotImplementedException(implementation.ToString());
+            }
+        }
 
         /// <summary>
         /// System.Threading.Thread.CurrentThread.ManagedThreadId of the thread that created this <see cref="OpenTK.NativeWindow"/>.
