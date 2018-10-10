@@ -329,7 +329,7 @@ namespace OpenTK.Graphics.Vulkan
         }
 
 #if DEBUG
-        ~NativeList()
+        ~VulkanList()
         {
             if (_dataPtr != null)
             {

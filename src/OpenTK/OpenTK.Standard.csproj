@@ -3,7 +3,7 @@
     <AssemblyName>OpenTK</AssemblyName>
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>OpenTK</RootNamespace>
-	<DefineConstants>$(DefineConstants);WIN32;CARBON;X11;OPENGL;OPENGLES;MINIMAL</DefineConstants>    
+	<DefineConstants>DEBUG;TRACE;WIN32;CARBON;X11;OPENGL;OPENGLES;MINIMAL</DefineConstants>    
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
@@ -109,7 +109,7 @@ This version can be found at https://github.com/Ryujinx/Opentk</Description>
   </ProjectExtensions>
   <ItemGroup>
     <PackageReference Include="System.Drawing.Common" Version="4.5.0" />
-    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="4.5.0" />
+    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="4.5.2" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
