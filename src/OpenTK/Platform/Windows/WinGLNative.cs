@@ -28,10 +28,8 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
 using OpenTK.Input;
-#if !MINIMAL
 using System.Drawing;
 using System.Drawing.Imaging;
-#endif
 
 namespace OpenTK.Platform.Windows
 {

@@ -27,7 +27,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-#if !(ANDROID || IPHONE || MINIMAL)
+#if !(ANDROID || IPHONE || MINIMAL) || NETSTANDARD
 using Microsoft.Win32;
 #endif
 using OpenTK.Input;

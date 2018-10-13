@@ -25,9 +25,7 @@
 
 
 using System;
-#if !MINIMAL
 using System.Drawing;
-#endif
 using System.Text;
 using System.Runtime.InteropServices;
 
@@ -2772,7 +2770,7 @@ namespace OpenTK.Graphics.OpenGL
                 }
             }
         }
-#if MINIMAL
+#if !MINIMAL
         /// <summary>
         /// [requires: v1.0]
         /// Set the viewport. This function assumes a lower left corner of (0, 0).

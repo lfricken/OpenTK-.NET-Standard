@@ -45,6 +45,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "vk.generator", "src\vk.gene
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "vk.rewrite", "src\vk.rewrite\vk.rewrite.csproj", "{3E9B1C4D-BCB4-418A-A94E-DD164A19C6A2}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "test", "..\opentk-examples\src\test\test.csproj", "{9FA5D0A1-BE90-476D-8BA7-3C1A0D9D7D4A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -103,6 +105,10 @@ Global
 		{3E9B1C4D-BCB4-418A-A94E-DD164A19C6A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3E9B1C4D-BCB4-418A-A94E-DD164A19C6A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3E9B1C4D-BCB4-418A-A94E-DD164A19C6A2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9FA5D0A1-BE90-476D-8BA7-3C1A0D9D7D4A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9FA5D0A1-BE90-476D-8BA7-3C1A0D9D7D4A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9FA5D0A1-BE90-476D-8BA7-3C1A0D9D7D4A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9FA5D0A1-BE90-476D-8BA7-3C1A0D9D7D4A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

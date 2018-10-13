@@ -2717,7 +2717,7 @@ namespace OpenTK.Platform.Windows
         public char dbcc_name;
     }
 
-#if ANDROID || IPHONE || MINIMAL
+#if (ANDROID || IPHONE || MINIMAL) && !NETSTANDARD
 
     internal class RegistryKey
     {

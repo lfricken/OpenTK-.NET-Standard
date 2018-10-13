@@ -1,4 +1,4 @@
-﻿#if ANDROID || IPHONE || MINIMAL
+﻿#if (ANDROID || IPHONE || MINIMAL) && !NETSTANDARD
 using System;
 
 #if !MINIMAL
