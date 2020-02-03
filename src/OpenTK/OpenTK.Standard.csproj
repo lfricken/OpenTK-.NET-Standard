@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
  <PropertyGroup>
     <AssemblyName>OpenTK</AssemblyName>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
     <RootNamespace>OpenTK</RootNamespace>
 	<DefineConstants>$(DefineConstants);WIN32;CARBON;X11;SDL2;OPENGL;OPENGLES;MINIMAL</DefineConstants>    
   </PropertyGroup>
@@ -68,7 +68,7 @@
   </ItemGroup>
   <PropertyGroup>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>1.0.4</Version>
+    <Version>1.0.5.0</Version>
     <Description>The Open Toolkit library (OpenTK) is an advanced, low-level C# wrapper for OpenGL, OpenGL ES and OpenAL.
            It is suitable for games, scientific visualizations and projects that require 3d graphics, audio or compute functionality.
 
@@ -84,8 +84,8 @@ This version can be found at https://github.com/emmauss/opentk</Description>
     <Company>emmaus</Company>
     <Product>OpenTK</Product>
     <PackageProjectUrl>https://github.com/emmauss/opentk</PackageProjectUrl>
-    <AssemblyVersion>1.0.4.0</AssemblyVersion>
-    <FileVersion>1.0.4.0</FileVersion>
+    <AssemblyVersion>1.0.5.0</AssemblyVersion>
+    <FileVersion>1.0.5.0</FileVersion>
   </PropertyGroup>
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Command="$(OutputPath)..\..\..\..\Generator.Rewrite\bin\Debug\Rewrite.exe --assembly $(OutputPath)OpenTK.dll --signing-key ..\..\OpenTK.snk -debug -netstandard" Condition="$(OS) == 'Windows_NT' and $(Configuration) == 'Debug'" />
@@ -108,7 +108,8 @@ This version can be found at https://github.com/emmauss/opentk</Description>
     </MonoDevelop>
   </ProjectExtensions>
   <ItemGroup>
-    <PackageReference Include="System.Drawing.Common" Version="4.5.0" />
+    <PackageReference Include="Microsoft.Win32.Registry" Version="4.7.0" />
+    <PackageReference Include="System.Drawing.Common" Version="4.7.0" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />

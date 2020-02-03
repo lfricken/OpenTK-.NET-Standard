@@ -27,9 +27,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-#if !(ANDROID || IPHONE || MINIMAL)
 using Microsoft.Win32;
-#endif
 using OpenTK.Input;
 using OpenTK.Platform.Common;
 
@@ -96,7 +94,7 @@ namespace OpenTK.Platform.Windows
                     {
                         // This is a keyboard or USB keyboard device. In the latter case, discover if it really is a
                         // keyboard device by qeurying the registry.
-                        RegistryKey regkey = GetRegistryKey(name);
+                        var regkey = GetRegistryKey(name);
                         if (regkey == null)
                         {
                             continue;
@@ -108,7 +106,7 @@ namespace OpenTK.Platform.Windows
 
                         // making a guess at backwards compatability. Not sure what older windows returns in these cases...
                         if (deviceClass == null || deviceClass.Equals(string.Empty)){
-                            RegistryKey classGUIDKey = Registry.LocalMachine.OpenSubKey(@"SYSTEM\CurrentControlSet\Control\Class\" + deviceClassGUID);
+                            var classGUIDKey = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(@"SYSTEM\CurrentControlSet\Control\Class\" + deviceClassGUID);
                             deviceClass = classGUIDKey != null ? (string)classGUIDKey.GetValue("Class") : string.Empty;
                         }
 
@@ -204,7 +202,7 @@ namespace OpenTK.Platform.Windows
             return processed;
         }
 
-        private static RegistryKey GetRegistryKey(string name)
+        private static Microsoft.Win32.RegistryKey GetRegistryKey(string name)
         {
             if (name.Length < 4)
             {
@@ -226,10 +224,12 @@ namespace OpenTK.Platform.Windows
             // The final part is the class GUID and is not needed here
 
             string findme = string.Format(
-                @"System\CurrentControlSet\Enum\{0}\{1}\{2}",
+                @"SYSTEM\CurrentControlSet\Enum\{0}\{1}\{2}",
                 id_01, id_02, id_03);
 
-            RegistryKey regkey = Registry.LocalMachine.OpenSubKey(findme);
+
+            var shellKey = Microsoft.Win32.RegistryKey.OpenBaseKey(Microsoft.Win32.RegistryHive.LocalMachine, RegistryView.Registry64);
+            Microsoft.Win32.RegistryKey regkey = shellKey.OpenSubKey(findme);
             return regkey;
         }
 
