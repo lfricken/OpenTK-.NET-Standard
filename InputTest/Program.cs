@@ -20,11 +20,11 @@ namespace InputTest
 
             while (true)
             {
-                var keyboard = Keyboard.GetState();
-                if (keyboard.IsAnyKeyDown)
+                var mouseCurs = Mouse.GetCursorState();
+                var mouse = Mouse.GetState();
+                if (mouseCurs.IsAnyButtonDown || mouse.IsAnyButtonDown)
                 {
-                    Console.WriteLine("Key detected. Working");
-                    break;
+                    Console.WriteLine(mouseCurs.X + " " + mouseCurs.Y + " - " + mouse.X + " " + mouse.Y);
                 }
 
                 Thread.Sleep(500);
