@@ -1329,7 +1329,4 @@ namespace OpenTK
         /// <returns>True if both instances are equal; false otherwise.</returns>
         public bool Equals(Quaterniond other)
         {
-            return Xyz == other.Xyz && W == other.W;
-        }
-    }
-}
+            return Xyz == other.Xyz && W == 

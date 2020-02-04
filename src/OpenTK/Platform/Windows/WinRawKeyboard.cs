@@ -227,10 +227,10 @@ namespace OpenTK.Platform.Windows
                 @"SYSTEM\CurrentControlSet\Enum\{0}\{1}\{2}",
                 id_01, id_02, id_03);
 
+            var key = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(findme);
 
-            var shellKey = Microsoft.Win32.RegistryKey.OpenBaseKey(Microsoft.Win32.RegistryHive.LocalMachine, RegistryView.Registry64);
-            Microsoft.Win32.RegistryKey regkey = shellKey.OpenSubKey(findme);
-            return regkey;
+            //RegistryKey regkey = Registry.LocalMachine.OpenSubKey(findme);
+            return key;
         }
 
         private static string GetDeviceName(RawInputDeviceList dev)
@@ -306,3 +306,4 @@ namespace OpenTK.Platform.Windows
         }
     }
 }
+                                                            

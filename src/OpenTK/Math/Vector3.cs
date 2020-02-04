@@ -1425,7 +1425,4 @@ namespace OpenTK
             return
                 X == other.X &&
                 Y == other.Y &&
-                Z == other.Z;
-        }
-    }
-}
+         

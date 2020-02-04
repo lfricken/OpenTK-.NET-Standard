@@ -2722,10 +2722,13 @@ namespace OpenTK.Platform.Windows
     internal class RegistryKey
     {
         IntPtr hkey;
+        bool is64Bit;
 
         internal RegistryKey(IntPtr hkey)
         {
             this.hkey = hkey;
+
+            is64Bit = Environment.Is64BitOperatingSystem;
         }
 
         internal string GetValue(string subkey)
@@ -2740,7 +2743,7 @@ namespace OpenTK.Platform.Windows
         internal RegistryKey OpenSubKey(string subkey)
         {
             IntPtr result;
-            Functions.RegOpenKeyEx(hkey, subkey, 0, 1, out result);
+            var res = Functions.RegOpenKeyEx(hkey, subkey, 0,  0x0100 | 0x0200, out result);
             return new RegistryKey(result);
         }
     }
@@ -4102,37 +4105,4 @@ namespace OpenTK.Platform.Windows
         internal POINT Point;
         //internal object RefObject;
 
-        public override string ToString()
-        {
-            return String.Format("msg=0x{0:x} ({1}) hwnd=0x{2:x} wparam=0x{3:x} lparam=0x{4:x} pt=0x{5:x}", (int)Message, Message.ToString(), HWnd.ToInt32(), WParam.ToInt32(), LParam.ToInt32(), Point);
-        }
-    }
-
-    [StructLayout(LayoutKind.Sequential)]
-    internal struct POINT
-    {
-        internal int X;
-        internal int Y;
-
-        internal POINT(int x, int y)
-        {
-            this.X = x;
-            this.Y = y;
-        }
-
-        internal Point ToPoint()
-        {
-            return new Point(X, Y);
-        }
-
-        public override string ToString()
-        {
-            return "Point {" + X.ToString() + ", " + Y.ToString() + ")";
-        }
-    }
-}
-
-#pragma warning restore 3019
-#pragma warning restore 0649
-#pragma warning restore 0169
-#pragma warning restore 0414
+   

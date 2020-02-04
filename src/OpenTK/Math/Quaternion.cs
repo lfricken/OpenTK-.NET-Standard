@@ -741,7 +741,4 @@ namespace OpenTK
         /// <returns>True if both instances are equal; false otherwise.</returns>
         public bool Equals(Quaternion other)
         {
-            return Xyz == other.Xyz && W == other.W;
-        }
-    }
-}
+            return Xyz == other.Xyz && W =
