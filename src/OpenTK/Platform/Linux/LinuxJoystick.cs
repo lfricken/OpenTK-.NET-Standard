@@ -510,4 +510,3 @@ namespace OpenTK.Platform.Linux
         }
     }
 }
-  

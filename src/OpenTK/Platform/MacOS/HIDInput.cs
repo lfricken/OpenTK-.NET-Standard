@@ -1727,5 +1727,3 @@ namespace OpenTK.Platform.MacOS
         }
     }
 }
-
-              

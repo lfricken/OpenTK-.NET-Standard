@@ -861,4 +861,3 @@ namespace OpenTK.Platform.Windows
         }
     }
 }
-                                   

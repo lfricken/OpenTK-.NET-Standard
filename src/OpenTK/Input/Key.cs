@@ -375,4 +375,4 @@ namespace OpenTK.Input
         /// <summary>Indicates the last available keyboard key.</summary>
         LastKey
     }
-}                                                                                                                     
+}

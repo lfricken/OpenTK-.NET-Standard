@@ -288,4 +288,3 @@ namespace OpenTK.Platform.MacOS
         }
     }
 }
-  

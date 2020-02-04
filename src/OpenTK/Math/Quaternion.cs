@@ -269,7 +269,7 @@ namespace OpenTK
         /// <returns>The result of the operation.</returns>
         public static Quaternion Sub(Quaternion left, Quaternion right)
         {
-            return  new Quaternion(
+            return new Quaternion(
                 left.Xyz - right.Xyz,
                 left.W - right.W);
         }
@@ -741,4 +741,7 @@ namespace OpenTK
         /// <returns>True if both instances are equal; false otherwise.</returns>
         public bool Equals(Quaternion other)
         {
-            return Xyz == other.Xyz && W =
+            return Xyz == other.Xyz && W == other.W;
+        }
+    }
+}
