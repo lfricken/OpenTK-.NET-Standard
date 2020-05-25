@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27703.2000
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29411.108
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Generator.Bind", "src\Generator.Bind\Generator.Bind.csproj", "{31D19132-0000-0000-0000-000000000000}"
 EndProject
@@ -44,6 +44,8 @@ EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "OpenTK.Tests.Generators", "tests\OpenTK.Tests.Generators\OpenTK.Tests.Generators.fsproj", "{2B11AAEB-D8AC-4356-938F-532D720E0C30}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenTK.Standard", "src\OpenTK\OpenTK.Standard.csproj", "{67F02FD3-8F7F-4D89-8551-359993271CA3}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InputTest", "InputTest\InputTest.csproj", "{BC138ACD-99EC-44ED-BBCF-731EADF06C42}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -103,6 +105,10 @@ Global
 		{67F02FD3-8F7F-4D89-8551-359993271CA3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{67F02FD3-8F7F-4D89-8551-359993271CA3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{67F02FD3-8F7F-4D89-8551-359993271CA3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BC138ACD-99EC-44ED-BBCF-731EADF06C42}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BC138ACD-99EC-44ED-BBCF-731EADF06C42}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BC138ACD-99EC-44ED-BBCF-731EADF06C42}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BC138ACD-99EC-44ED-BBCF-731EADF06C42}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

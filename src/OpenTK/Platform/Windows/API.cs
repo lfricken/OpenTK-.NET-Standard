@@ -186,33 +186,8 @@ namespace OpenTK.Platform.Windows
             [MarshalAs(UnmanagedType.Bool)] bool bMenu,
             ExtendedWindowStyle dwExStyle);
 
-        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
-        internal static extern IntPtr CreateWindowEx(
-            ExtendedWindowStyle ExStyle,
-            [MarshalAs(UnmanagedType.LPTStr)] string className,
-            [MarshalAs(UnmanagedType.LPTStr)] string windowName,
-            WindowStyle Style,
-            int X, int Y,
-            int Width, int Height,
-            IntPtr HandleToParentWindow,
-            IntPtr Menu,
-            IntPtr Instance,
-            IntPtr Param);
-        /*
-        [DllImport("user32.dll", SetLastError = true)]
-        internal static extern int CreateWindowEx(
-            [In]ExtendedWindowStyle ExStyle,
-            [In]IntPtr ClassName,
-            [In]IntPtr WindowName,
-            [In]WindowStyle Style,
-            [In]int X, [In]int Y,
-            [In]int Width, [In]int Height,
-            [In]IntPtr HandleToParentWindow,
-            [In]IntPtr Menu,
-            [In]IntPtr Instance,
-            [In]IntPtr Param);
-        */
-        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+
+        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
         internal static extern IntPtr CreateWindowEx(
             ExtendedWindowStyle ExStyle,
             IntPtr ClassAtom,
@@ -229,19 +204,22 @@ namespace OpenTK.Platform.Windows
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool DestroyWindow(IntPtr windowHandle);
 
-        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
         internal static extern ushort RegisterClass(ref WindowClass window_class);
 
-        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
         internal static extern ushort RegisterClassEx(ref ExtendedWindowClass window_class);
 
-        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+        [DllImport("user32.dll", SetLastError = true)]
+        internal static extern BOOL IsWindowUnicode(HWND hwnd);
+
+        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
         internal static extern short UnregisterClass([MarshalAs(UnmanagedType.LPTStr)] LPCTSTR className, IntPtr instance);
 
-        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
         internal static extern short UnregisterClass(IntPtr className, IntPtr instance);
 
-        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
         internal static extern BOOL GetClassInfoEx(HINSTANCE hinst,
             [MarshalAs(UnmanagedType.LPTStr)] LPCTSTR lpszClass, ref ExtendedWindowClass lpwcx);
 
@@ -249,7 +227,7 @@ namespace OpenTK.Platform.Windows
         internal static extern BOOL GetClassInfoEx(HINSTANCE hinst, UIntPtr lpszClass, ref ExtendedWindowClass lpwcx);
 
         [SuppressUnmanagedCodeSecurity]
-        [DllImport("user32.dll", SetLastError = true)]
+        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
         internal static extern LRESULT CallWindowProc(WNDPROC lpPrevWndFunc, HWND hWnd, WindowMessage Msg,
             WPARAM wParam, LPARAM lParam);
 
@@ -319,7 +297,7 @@ namespace OpenTK.Platform.Windows
         }
 
         [SuppressUnmanagedCodeSecurity]
-        [DllImport("user32.dll", SetLastError = true, EntryPoint="GetWindowLong")]
+        [DllImport("user32.dll", SetLastError = true, EntryPoint = "GetWindowLong")]
         private static extern ULONG GetWindowLongInternal(HWND hWnd, GetWindowLongOffsets nIndex);
 
         [SuppressUnmanagedCodeSecurity]
@@ -336,7 +314,7 @@ namespace OpenTK.Platform.Windows
         /// <param name="flags">Not used</param>
         /// <returns>True if there is a message pending.</returns>
         [System.Security.SuppressUnmanagedCodeSecurity]
-        [DllImport("User32.dll"), CLSCompliant(false)]
+        [DllImport("User32.dll", CharSet = CharSet.Unicode), CLSCompliant(false)]
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool PeekMessage(ref MSG msg, IntPtr hWnd, int messageFilterMin, int messageFilterMax, PeekMessageFlags flags);
 
@@ -354,7 +332,7 @@ namespace OpenTK.Platform.Windows
         /// To get extended error information, call GetLastError.
         /// </returns>
         [System.Security.SuppressUnmanagedCodeSecurity]
-        [DllImport("User32.dll", CharSet = CharSet.Auto), CLSCompliant(false)]
+        [DllImport("User32.dll", CharSet = CharSet.Unicode), CLSCompliant(false)]
         //[return: MarshalAs(UnmanagedType.Bool)]
         internal static extern INT GetMessage(ref MSG msg,
             IntPtr windowHandle, int messageFilterMin, int messageFilterMax);
@@ -370,12 +348,12 @@ namespace OpenTK.Platform.Windows
         [DllImport("User32.dll")]
         internal static extern int GetMessageTime();
 
-        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
         internal static extern LRESULT SendMessage(HWND hWnd, WindowMessage Msg, WPARAM wParam, LPARAM lParam);
 
         [CLSCompliant(false)]
         [System.Security.SuppressUnmanagedCodeSecurity]
-        [DllImport("User32.dll", CharSet = CharSet.Auto)]
+        [DllImport("User32.dll", CharSet = CharSet.Unicode)]
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern BOOL PostMessage(
             HWND hWnd,
@@ -388,11 +366,11 @@ namespace OpenTK.Platform.Windows
         internal static extern void PostQuitMessage(int exitCode);
 
         [SuppressUnmanagedCodeSecurity]
-        [DllImport("User32.dll", CharSet = CharSet.Auto), CLSCompliant(false)]
+        [DllImport("User32.dll", CharSet = CharSet.Unicode), CLSCompliant(false)]
         internal static extern LRESULT DispatchMessage(ref MSG msg);
 
         [SuppressUnmanagedCodeSecurity]
-        [DllImport("User32.dll", CharSet = CharSet.Auto), CLSCompliant(false)]
+        [DllImport("User32.dll", CharSet = CharSet.Unicode), CLSCompliant(false)]
         internal static extern BOOL TranslateMessage(ref MSG lpMsg);
 
         /// <summary>
@@ -422,7 +400,7 @@ namespace OpenTK.Platform.Windows
         [DllImport("User32.dll", CharSet = CharSet.Auto)]
         internal static extern DWORD GetQueueStatus([MarshalAs(UnmanagedType.U4)] QueueStatusFlags flags);
 
-        [DllImport("User32.dll", CharSet = CharSet.Auto)]
+        [DllImport("User32.dll", CharSet = CharSet.Unicode)]
         public extern static IntPtr DefWindowProc(HWND hWnd, WindowMessage msg, IntPtr wParam, IntPtr lParam);
 
         /// <summary>
@@ -485,12 +463,12 @@ namespace OpenTK.Platform.Windows
         /// <param name="format"></param>
         /// <param name="pfd"></param>
         /// <returns></returns>
-        [DllImport("gdi32.dll", SetLastError=true)]
+        [DllImport("gdi32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool SetPixelFormat(IntPtr dc, int format, ref PixelFormatDescriptor pfd);
 
         [SuppressUnmanagedCodeSecurity]
-        [DllImport("gdi32.dll", SetLastError=true)]
+        [DllImport("gdi32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool SwapBuffers(IntPtr dc);
 
@@ -699,7 +677,7 @@ namespace OpenTK.Platform.Windows
         /// When you are finished using the icon, destroy it using the
         /// DestroyIcon function.
         /// </remarks>
-        [DllImport("user32.dll", SetLastError=true)]
+        [DllImport("user32.dll", SetLastError = true)]
         public static extern HICON CreateIconIndirect(ref IconInfo iconInfo);
 
         /// <summary>
@@ -722,7 +700,7 @@ namespace OpenTK.Platform.Windows
         /// of IconInfo. The calling application must manage these bitmaps and
         /// delete them when they are no longer necessary.
         /// </remarks>
-        [DllImport("user32.dll", SetLastError=true)]
+        [DllImport("user32.dll", SetLastError = true)]
         public static extern BOOL GetIconInfo(HICON hIcon, out IconInfo pIconInfo);
 
         /// <summary>
@@ -788,7 +766,7 @@ namespace OpenTK.Platform.Windows
         public static extern LONG ChangeDisplaySettingsEx([MarshalAs(UnmanagedType.LPTStr)] LPCTSTR lpszDeviceName,
             LPDEVMODE lpDevMode, HWND hwnd, ChangeDisplaySettingsEnum dwflags, LPVOID lParam);
 
-        [DllImport("user32.dll", SetLastError = true, CharSet=CharSet.Auto)]
+        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern BOOL EnumDisplayDevices([MarshalAs(UnmanagedType.LPTStr)] LPCTSTR lpDevice,
             DWORD iDevNum, [In, Out] WindowsDisplayDevice lpDisplayDevice, DWORD dwFlags);
@@ -843,7 +821,7 @@ namespace OpenTK.Platform.Windows
         [DllImport("gdi32.dll", CharSet = CharSet.Auto, SetLastError = true, ExactSpelling = true)]
         public static extern int GetDeviceCaps(IntPtr hDC, DeviceCaps nIndex);
 
-        [DllImport("user32.dll", SetLastError=true)]
+        [DllImport("user32.dll", SetLastError = true)]
         public static extern BOOL TrackMouseEvent(ref TrackMouseEventStructure lpEventTrack);
 
         [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true, ExactSpelling = true)]
@@ -1428,10 +1406,10 @@ namespace OpenTK.Platform.Windows
         internal static extern BOOL DeleteObject([In]IntPtr hObject);
 
 
-        [DllImport("user32.dll", SetLastError=true)]
+        [DllImport("user32.dll", SetLastError = true)]
         public static extern UINT_PTR SetTimer(HWND hWnd, UINT_PTR nIDEvent, UINT uElapse, TIMERPROC lpTimerFunc);
 
-        [DllImport("user32.dll", SetLastError=true)]
+        [DllImport("user32.dll", SetLastError = true)]
         public static extern BOOL KillTimer(HWND hWnd, UINT_PTR uIDEvent);
 
         [UnmanagedFunctionPointer(CallingConvention.Winapi)]
@@ -1460,119 +1438,119 @@ namespace OpenTK.Platform.Windows
     }
 
     internal static class Constants
-        {
-            // Found in winuser.h
-            internal const int KEYBOARD_OVERRUN_MAKE_CODE = 0xFF;
+    {
+        // Found in winuser.h
+        internal const int KEYBOARD_OVERRUN_MAKE_CODE = 0xFF;
 
-            // WM_ACTIVATE state values (found in winuser.h)
-            internal const int WA_INACTIVE    = 0;
-            internal const int WA_ACTIVE      = 1;
-            internal const int WA_CLICKACTIVE = 2;
+        // WM_ACTIVATE state values (found in winuser.h)
+        internal const int WA_INACTIVE = 0;
+        internal const int WA_ACTIVE = 1;
+        internal const int WA_CLICKACTIVE = 2;
 
-            // Window Messages (found in winuser.h)
-            internal const int WM_NULL = 0x0000;
-            internal const int WM_CREATE = 0x0001;
-            internal const int WM_DESTROY = 0x0002;
-            internal const int WM_MOVE = 0x0003;
-            internal const int WM_SIZE = 0x0005;
-            internal const int WM_ACTIVATE = 0x0006;
-            internal const int WM_SETFOCUS = 0x0007;
-            internal const int WM_KILLFOCUS = 0x0008;
-            internal const int WM_ENABLE = 0x000A;
-            internal const int WM_SETREDRAW = 0x000B;
-            internal const int WM_SETTEXT = 0x000C;
-            internal const int WM_GETTEXT = 0x000D;
-            internal const int WM_GETTEXTLENGTH = 0x000E;
-            internal const int WM_PAINT = 0x000F;
-            internal const int WM_CLOSE = 0x0010;
-            // _WIN32_WCE
-            internal const int WM_QUERYENDSESSION = 0x0011;
-            internal const int WM_QUERYOPEN = 0x0013;
-            internal const int WM_ENDSESSION = 0x0016;
-            internal const int WM_QUIT = 0x0012;
-            internal const int WM_ERASEBKGND = 0x0014;
-            internal const int WM_SYSCOLORCHANGE = 0x0015;
-            internal const int WM_SHOWWINDOW = 0x0018;
-            internal const int WM_WININICHANGE = 0x001A;
-            // WINVER >= 0x400
-            internal const int WM_SETTINGCHANGE = WM_WININICHANGE;
+        // Window Messages (found in winuser.h)
+        internal const int WM_NULL = 0x0000;
+        internal const int WM_CREATE = 0x0001;
+        internal const int WM_DESTROY = 0x0002;
+        internal const int WM_MOVE = 0x0003;
+        internal const int WM_SIZE = 0x0005;
+        internal const int WM_ACTIVATE = 0x0006;
+        internal const int WM_SETFOCUS = 0x0007;
+        internal const int WM_KILLFOCUS = 0x0008;
+        internal const int WM_ENABLE = 0x000A;
+        internal const int WM_SETREDRAW = 0x000B;
+        internal const int WM_SETTEXT = 0x000C;
+        internal const int WM_GETTEXT = 0x000D;
+        internal const int WM_GETTEXTLENGTH = 0x000E;
+        internal const int WM_PAINT = 0x000F;
+        internal const int WM_CLOSE = 0x0010;
+        // _WIN32_WCE
+        internal const int WM_QUERYENDSESSION = 0x0011;
+        internal const int WM_QUERYOPEN = 0x0013;
+        internal const int WM_ENDSESSION = 0x0016;
+        internal const int WM_QUIT = 0x0012;
+        internal const int WM_ERASEBKGND = 0x0014;
+        internal const int WM_SYSCOLORCHANGE = 0x0015;
+        internal const int WM_SHOWWINDOW = 0x0018;
+        internal const int WM_WININICHANGE = 0x001A;
+        // WINVER >= 0x400
+        internal const int WM_SETTINGCHANGE = WM_WININICHANGE;
 
-            internal const int WM_DEVMODECHANGE = 0x001B;
-            internal const int WM_ACTIVATEAPP = 0x001C;
-            internal const int WM_FONTCHANGE = 0x001D;
-            internal const int WM_TIMECHANGE = 0x001E;
-            internal const int WM_CANCELMODE = 0x001F;
-            internal const int WM_SETCURSOR = 0x0020;
-            internal const int WM_MOUSEACTIVATE = 0x0021;
-            internal const int WM_CHILDACTIVATE = 0x0022;
-            internal const int WM_QUEUESYNC = 0x0023;
+        internal const int WM_DEVMODECHANGE = 0x001B;
+        internal const int WM_ACTIVATEAPP = 0x001C;
+        internal const int WM_FONTCHANGE = 0x001D;
+        internal const int WM_TIMECHANGE = 0x001E;
+        internal const int WM_CANCELMODE = 0x001F;
+        internal const int WM_SETCURSOR = 0x0020;
+        internal const int WM_MOUSEACTIVATE = 0x0021;
+        internal const int WM_CHILDACTIVATE = 0x0022;
+        internal const int WM_QUEUESYNC = 0x0023;
 
-            internal const int WM_GETMINMAXINFO = 0x0024;
+        internal const int WM_GETMINMAXINFO = 0x0024;
 
-            internal const int WM_WINDOWPOSCHANGING = 0x0046;
-            internal const int WM_WINDOWPOSCHANGED = 0x0047;
+        internal const int WM_WINDOWPOSCHANGING = 0x0046;
+        internal const int WM_WINDOWPOSCHANGED = 0x0047;
 
-            // Keyboard events (found in winuser.h)
-            internal const int WM_INPUT = 0x00FF;       // Raw input. XP and higher only.
-            internal const int WM_KEYDOWN = 0x0100;
-            internal const int WM_KEYUP = 0x101;
-            internal const int WM_SYSKEYDOWN = 0x0104;
-            internal const int WM_SYSKEYUP = 0x0105;
-            internal const int WM_COMMAND = 0x0111;
-            internal const int WM_SYSCOMMAND = 0x0112;
-            internal const int WM_ENTERIDLE = 0x121;
+        // Keyboard events (found in winuser.h)
+        internal const int WM_INPUT = 0x00FF;       // Raw input. XP and higher only.
+        internal const int WM_KEYDOWN = 0x0100;
+        internal const int WM_KEYUP = 0x101;
+        internal const int WM_SYSKEYDOWN = 0x0104;
+        internal const int WM_SYSKEYUP = 0x0105;
+        internal const int WM_COMMAND = 0x0111;
+        internal const int WM_SYSCOMMAND = 0x0112;
+        internal const int WM_ENTERIDLE = 0x121;
 
-            // Pixel types (found in wingdi.h)
-            internal const byte PFD_TYPE_RGBA = 0;
-            internal const byte PFD_TYPE_COLORINDEX = 1;
+        // Pixel types (found in wingdi.h)
+        internal const byte PFD_TYPE_RGBA = 0;
+        internal const byte PFD_TYPE_COLORINDEX = 1;
 
-            // Layer types (found in wingdi.h)
-            internal const byte PFD_MAIN_PLANE = 0;
-            internal const byte PFD_OVERLAY_PLANE = 1;
-            internal const byte PFD_UNDERLAY_PLANE = unchecked((byte)-1);
+        // Layer types (found in wingdi.h)
+        internal const byte PFD_MAIN_PLANE = 0;
+        internal const byte PFD_OVERLAY_PLANE = 1;
+        internal const byte PFD_UNDERLAY_PLANE = unchecked((byte)-1);
 
-            // Device mode types (found in wingdi.h)
-            internal const int DM_LOGPIXELS = 0x00020000;
-            internal const int DM_BITSPERPEL = 0x00040000;
-            internal const int DM_PELSWIDTH = 0x00080000;
-            internal const int DM_PELSHEIGHT = 0x00100000;
-            internal const int DM_DISPLAYFLAGS = 0x00200000;
-            internal const int DM_DISPLAYFREQUENCY = 0x00400000;
+        // Device mode types (found in wingdi.h)
+        internal const int DM_LOGPIXELS = 0x00020000;
+        internal const int DM_BITSPERPEL = 0x00040000;
+        internal const int DM_PELSWIDTH = 0x00080000;
+        internal const int DM_PELSHEIGHT = 0x00100000;
+        internal const int DM_DISPLAYFLAGS = 0x00200000;
+        internal const int DM_DISPLAYFREQUENCY = 0x00400000;
 
-            // ChangeDisplaySettings results (found in winuser.h)
-            internal const int DISP_CHANGE_SUCCESSFUL = 0;
-            internal const int DISP_CHANGE_RESTART = 1;
-            internal const int DISP_CHANGE_FAILED = -1;
+        // ChangeDisplaySettings results (found in winuser.h)
+        internal const int DISP_CHANGE_SUCCESSFUL = 0;
+        internal const int DISP_CHANGE_RESTART = 1;
+        internal const int DISP_CHANGE_FAILED = -1;
 
-            // (found in winuser.h)
-            internal const int ENUM_REGISTRY_SETTINGS = -2;
-            internal const int ENUM_CURRENT_SETTINGS = -1;
+        // (found in winuser.h)
+        internal const int ENUM_REGISTRY_SETTINGS = -2;
+        internal const int ENUM_CURRENT_SETTINGS = -1;
 
-            internal static readonly IntPtr MESSAGE_ONLY = new IntPtr(-3);
+        internal static readonly IntPtr MESSAGE_ONLY = new IntPtr(-3);
 
-            internal static readonly IntPtr HKEY_LOCAL_MACHINE = new IntPtr(unchecked((int)0x80000002));
+        internal static readonly IntPtr HKEY_LOCAL_MACHINE = new IntPtr(unchecked((int)0x80000002));
 
-            // System Error Codes
-            // http://msdn.microsoft.com/en-us/library/windows/desktop/ms681381(v=vs.85).aspx
+        // System Error Codes
+        // http://msdn.microsoft.com/en-us/library/windows/desktop/ms681381(v=vs.85).aspx
 
-            /// <summary>
-            /// The point passed to GetMouseMovePoints is not in the buffer.
-            /// </summary>
-            internal const int ERROR_POINT_NOT_FOUND = 1171;
+        /// <summary>
+        /// The point passed to GetMouseMovePoints is not in the buffer.
+        /// </summary>
+        internal const int ERROR_POINT_NOT_FOUND = 1171;
 
-            /// <summary>
-            /// Retrieves the points using the display resolution.
-            /// </summary>
-            internal const int GMMP_USE_DISPLAY_POINTS = 1;
+        /// <summary>
+        /// Retrieves the points using the display resolution.
+        /// </summary>
+        internal const int GMMP_USE_DISPLAY_POINTS = 1;
 
-            /// <summary>
-            /// Retrieves high resolution points. Points can range from zero to
-            /// 65,535 (0xFFFF) in both x and y coordinates. This is the resolution
-            /// provided by absolute coordinate pointing devices such as drawing
-            /// tablets.
-            /// </summary>
-            internal const int GMMP_USE_HIGH_RESOLUTION_POINTS = 2;
-        }
+        /// <summary>
+        /// Retrieves high resolution points. Points can range from zero to
+        /// 65,535 (0xFFFF) in both x and y coordinates. This is the resolution
+        /// provided by absolute coordinate pointing devices such as drawing
+        /// tablets.
+        /// </summary>
+        internal const int GMMP_USE_HIGH_RESOLUTION_POINTS = 2;
+    }
 
     internal struct CreateStruct
     {
@@ -1718,28 +1696,28 @@ namespace OpenTK.Platform.Windows
     internal struct LayerPlaneDescriptor
     {
         internal static readonly WORD Size = (WORD)Marshal.SizeOf(typeof(LayerPlaneDescriptor));
-        internal WORD  Version;
+        internal WORD Version;
         internal DWORD Flags;
-        internal BYTE  PixelType;
-        internal BYTE  ColorBits;
-        internal BYTE  RedBits;
-        internal BYTE  RedShift;
-        internal BYTE  GreenBits;
-        internal BYTE  GreenShift;
-        internal BYTE  BlueBits;
-        internal BYTE  BlueShift;
-        internal BYTE  AlphaBits;
-        internal BYTE  AlphaShift;
-        internal BYTE  AccumBits;
-        internal BYTE  AccumRedBits;
-        internal BYTE  AccumGreenBits;
-        internal BYTE  AccumBlueBits;
-        internal BYTE  AccumAlphaBits;
-        internal BYTE  DepthBits;
-        internal BYTE  StencilBits;
-        internal BYTE  AuxBuffers;
-        internal BYTE  LayerPlane;
-        private BYTE  Reserved;
+        internal BYTE PixelType;
+        internal BYTE ColorBits;
+        internal BYTE RedBits;
+        internal BYTE RedShift;
+        internal BYTE GreenBits;
+        internal BYTE GreenShift;
+        internal BYTE BlueBits;
+        internal BYTE BlueShift;
+        internal BYTE AlphaBits;
+        internal BYTE AlphaShift;
+        internal BYTE AccumBits;
+        internal BYTE AccumRedBits;
+        internal BYTE AccumGreenBits;
+        internal BYTE AccumBlueBits;
+        internal BYTE AccumAlphaBits;
+        internal BYTE DepthBits;
+        internal BYTE StencilBits;
+        internal BYTE AuxBuffers;
+        internal BYTE LayerPlane;
+        private BYTE Reserved;
         internal COLORREF crTransparent;
     }
 
@@ -2022,15 +2000,15 @@ namespace OpenTK.Platform.Windows
         /// <summary>
         /// Retains the current size (ignores the cx and cy parameters).
         /// </summary>
-        NOSIZE          = 0x0001,
+        NOSIZE = 0x0001,
         /// <summary>
         /// Retains the current position (ignores the x and y parameters).
         /// </summary>
-        NOMOVE          = 0x0002,
+        NOMOVE = 0x0002,
         /// <summary>
         /// Retains the current Z order (ignores the hwndInsertAfter parameter).
         /// </summary>
-        NOZORDER        = 0x0004,
+        NOZORDER = 0x0004,
         /// <summary>
         /// Does not redraw changes. If this flag is set, no repainting of any kind occurs.
         /// This applies to the client area, the nonclient area (including the title bar and scroll bars),
@@ -2038,52 +2016,52 @@ namespace OpenTK.Platform.Windows
         /// When this flag is set, the application must explicitly invalidate or redraw any parts
         /// of the window and parent window that need redrawing.
         /// </summary>
-        NOREDRAW        = 0x0008,
+        NOREDRAW = 0x0008,
         /// <summary>
         /// Does not activate the window. If this flag is not set,
         /// the window is activated and moved to the top of either the topmost or non-topmost group
         /// (depending on the setting of the hwndInsertAfter member).
         /// </summary>
-        NOACTIVATE      = 0x0010,
+        NOACTIVATE = 0x0010,
         /// <summary>
         /// Sends a WM_NCCALCSIZE message to the window, even if the window's size is not being changed.
         /// If this flag is not specified, WM_NCCALCSIZE is sent only when the window's size is being changed.
         /// </summary>
-        FRAMECHANGED    = 0x0020, /* The frame changed: send WM_NCCALCSIZE */
+        FRAMECHANGED = 0x0020, /* The frame changed: send WM_NCCALCSIZE */
         /// <summary>
         /// Displays the window.
         /// </summary>
-        SHOWWINDOW      = 0x0040,
+        SHOWWINDOW = 0x0040,
         /// <summary>
         /// Hides the window.
         /// </summary>
-        HIDEWINDOW      = 0x0080,
+        HIDEWINDOW = 0x0080,
         /// <summary>
         /// Discards the entire contents of the client area. If this flag is not specified,
         /// the valid contents of the client area are saved and copied back into the client area
         /// after the window is sized or repositioned.
         /// </summary>
-        NOCOPYBITS      = 0x0100,
+        NOCOPYBITS = 0x0100,
         /// <summary>
         /// Does not change the owner window's position in the Z order.
         /// </summary>
-        NOOWNERZORDER   = 0x0200, /* Don't do owner Z ordering */
+        NOOWNERZORDER = 0x0200, /* Don't do owner Z ordering */
         /// <summary>
         /// Prevents the window from receiving the WM_WINDOWPOSCHANGING message.
         /// </summary>
-        NOSENDCHANGING  = 0x0400, /* Don't send WM_WINDOWPOSCHANGING */
+        NOSENDCHANGING = 0x0400, /* Don't send WM_WINDOWPOSCHANGING */
 
         /// <summary>
         /// Draws a frame (defined in the window's class description) around the window.
         /// </summary>
-        DRAWFRAME       = FRAMECHANGED,
+        DRAWFRAME = FRAMECHANGED,
         /// <summary>
         /// Same as the NOOWNERZORDER flag.
         /// </summary>
-        NOREPOSITION    = NOOWNERZORDER,
+        NOREPOSITION = NOOWNERZORDER,
 
-        DEFERERASE      = 0x2000,
-        ASYNCWINDOWPOS  = 0x4000
+        DEFERERASE = 0x2000,
+        ASYNCWINDOWPOS = 0x4000
     }
 
     /// \internal
@@ -2670,7 +2648,7 @@ namespace OpenTK.Platform.Windows
         public static readonly int SizeInBytes = Marshal.SizeOf(default(MonitorInfo));
     }
 
-    [StructLayout(LayoutKind.Sequential, Pack=1)]
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     internal struct NcCalculateSize
     {
         public Win32Rectangle NewBounds;
@@ -2879,20 +2857,20 @@ namespace OpenTK.Platform.Windows
     [Flags]
     internal enum DisplayDeviceStateFlags
     {
-        None              = 0x00000000,
+        None = 0x00000000,
         AttachedToDesktop = 0x00000001,
-        MultiDriver       = 0x00000002,
-        PrimaryDevice     = 0x00000004,
-        MirroringDriver   = 0x00000008,
-        VgaCompatible     = 0x00000010,
-        Removable         = 0x00000020,
-        ModesPruned       = 0x08000000,
-        Remote            = 0x04000000,
-        Disconnect        = 0x02000000,
+        MultiDriver = 0x00000002,
+        PrimaryDevice = 0x00000004,
+        MirroringDriver = 0x00000008,
+        VgaCompatible = 0x00000010,
+        Removable = 0x00000020,
+        ModesPruned = 0x08000000,
+        Remote = 0x04000000,
+        Disconnect = 0x02000000,
 
         // Child device state
-        Active            = 0x00000001,
-        Attached          = 0x00000002,
+        Active = 0x00000001,
+        Attached = 0x00000002,
     }
 
     [Flags]
@@ -2993,13 +2971,13 @@ namespace OpenTK.Platform.Windows
 
     internal enum GetWindowLongOffsets : int
     {
-        WNDPROC       = (-4),
-        HINSTANCE     = (-6),
-        HWNDPARENT    = (-8),
-        STYLE         = (-16),
-        EXSTYLE       = (-20),
-        USERDATA      = (-21),
-        ID            = (-12),
+        WNDPROC = (-4),
+        HINSTANCE = (-6),
+        HWNDPARENT = (-8),
+        STYLE = (-16),
+        EXSTYLE = (-20),
+        USERDATA = (-21),
+        ID = (-12),
     }
     [Flags]
     internal enum PixelFormatDescriptorFlags : int
@@ -3068,106 +3046,106 @@ namespace OpenTK.Platform.Windows
         /// If set, this removes the top level collection from the inclusion list.
         /// This tells the operating system to stop reading from a device which matches the top level collection.
         /// </summary>
-        REMOVE          = 0x00000001,
+        REMOVE = 0x00000001,
         /// <summary>
         /// If set, this specifies the top level collections to exclude when reading a complete usage page.
         /// This flag only affects a TLC whose usage page is already specified with RawInputDeviceEnum.PAGEONLY.
         /// </summary>
-        EXCLUDE         = 0x00000010,
+        EXCLUDE = 0x00000010,
         /// <summary>
         /// If set, this specifies all devices whose top level collection is from the specified UsagePage.
         /// Note that usUsage must be zero. To exclude a particular top level collection, use EXCLUDE.
         /// </summary>
-        PAGEONLY        = 0x00000020,
+        PAGEONLY = 0x00000020,
         /// <summary>
         /// If set, this prevents any devices specified by UsagePage or Usage from generating legacy messages.
         /// This is only for the mouse and keyboard. See RawInputDevice Remarks.
         /// </summary>
-        NOLEGACY        = 0x00000030,
+        NOLEGACY = 0x00000030,
         /// <summary>
         /// If set, this enables the caller to receive the input even when the caller is not in the foreground.
         /// Note that Target must be specified in RawInputDevice.
         /// </summary>
-        INPUTSINK       = 0x00000100,
+        INPUTSINK = 0x00000100,
         /// <summary>
         /// If set, the mouse button click does not activate the other window.
         /// </summary>
-        CAPTUREMOUSE    = 0x00000200, // effective when mouse nolegacy is specified, otherwise it would be an error
+        CAPTUREMOUSE = 0x00000200, // effective when mouse nolegacy is specified, otherwise it would be an error
         /// <summary>
         /// If set, the application-defined keyboard device hotkeys are not handled.
         /// However, the system hotkeys; for example, ALT+TAB and CTRL+ALT+DEL, are still handled.
         /// By default, all keyboard hotkeys are handled.
         /// NOHOTKEYS can be specified even if NOLEGACY is not specified and Target is NULL in RawInputDevice.
         /// </summary>
-        NOHOTKEYS       = 0x00000200, // effective for keyboard.
+        NOHOTKEYS = 0x00000200, // effective for keyboard.
         /// <summary>
         /// Microsoft Windows XP Service Pack 1 (SP1): If set, the application command keys are handled. APPKEYS can be specified only if NOLEGACY is specified for a keyboard device.
         /// </summary>
-        APPKEYS         = 0x00000400, // effective for keyboard.
+        APPKEYS = 0x00000400, // effective for keyboard.
         /// <summary>
         /// If set, this enables the caller to receive input in the background only if the foreground application
         /// does not process it. In other words, if the foreground application is not registered for raw input,
         /// then the background application that is registered will receive the input.
         /// </summary>
-        EXINPUTSINK     = 0x00001000,
-        DEVNOTIFY       = 0x00002000,
+        EXINPUTSINK = 0x00001000,
+        DEVNOTIFY = 0x00002000,
         //EXMODEMASK      = 0x000000F0
     }
 
     internal enum GetRawInputDataEnum
     {
-        INPUT             = 0x10000003,
-        HEADER            = 0x10000005
+        INPUT = 0x10000003,
+        HEADER = 0x10000005
     }
 
     internal enum RawInputDeviceInfoEnum
     {
-        PREPARSEDDATA    = 0x20000005,
-        DEVICENAME       = 0x20000007,  // the return valus is the character length, not the byte size
-        DEVICEINFO       = 0x2000000b
+        PREPARSEDDATA = 0x20000005,
+        DEVICENAME = 0x20000007,  // the return valus is the character length, not the byte size
+        DEVICEINFO = 0x2000000b
     }
 
     [Flags]
     internal enum RawInputMouseState : ushort
     {
         LEFT_BUTTON_DOWN = 0x0001,  // Left Button changed to down.
-        LEFT_BUTTON_UP   = 0x0002,  // Left Button changed to up.
-        RIGHT_BUTTON_DOWN   = 0x0004,  // Right Button changed to down.
-        RIGHT_BUTTON_UP  = 0x0008,  // Right Button changed to up.
-        MIDDLE_BUTTON_DOWN  = 0x0010,  // Middle Button changed to down.
+        LEFT_BUTTON_UP = 0x0002,  // Left Button changed to up.
+        RIGHT_BUTTON_DOWN = 0x0004,  // Right Button changed to down.
+        RIGHT_BUTTON_UP = 0x0008,  // Right Button changed to up.
+        MIDDLE_BUTTON_DOWN = 0x0010,  // Middle Button changed to down.
         MIDDLE_BUTTON_UP = 0x0020,  // Middle Button changed to up.
 
-        BUTTON_1_DOWN    = LEFT_BUTTON_DOWN,
-        BUTTON_1_UP      = LEFT_BUTTON_UP,
-        BUTTON_2_DOWN    = RIGHT_BUTTON_DOWN,
-        BUTTON_2_UP      = RIGHT_BUTTON_UP,
-        BUTTON_3_DOWN    = MIDDLE_BUTTON_DOWN,
-        BUTTON_3_UP      = MIDDLE_BUTTON_UP,
+        BUTTON_1_DOWN = LEFT_BUTTON_DOWN,
+        BUTTON_1_UP = LEFT_BUTTON_UP,
+        BUTTON_2_DOWN = RIGHT_BUTTON_DOWN,
+        BUTTON_2_UP = RIGHT_BUTTON_UP,
+        BUTTON_3_DOWN = MIDDLE_BUTTON_DOWN,
+        BUTTON_3_UP = MIDDLE_BUTTON_UP,
 
-        BUTTON_4_DOWN    = 0x0040,
-        BUTTON_4_UP      = 0x0080,
-        BUTTON_5_DOWN    = 0x0100,
-        BUTTON_5_UP      = 0x0200,
+        BUTTON_4_DOWN = 0x0040,
+        BUTTON_4_UP = 0x0080,
+        BUTTON_5_DOWN = 0x0100,
+        BUTTON_5_UP = 0x0200,
 
-        WHEEL            = 0x0400,
-        HWHEEL            = 0x0800,
+        WHEEL = 0x0400,
+        HWHEEL = 0x0800,
     }
 
     internal enum RawInputKeyboardDataFlags : short //: ushort
     {
-        MAKE            = 0,
-        BREAK           = 1,
-        E0              = 2,
-        E1              = 4,
+        MAKE = 0,
+        BREAK = 1,
+        E0 = 2,
+        E1 = 4,
         TERMSRV_SET_LED = 8,
-        TERMSRV_SHADOW  = 0x10
+        TERMSRV_SHADOW = 0x10
     }
 
     internal enum RawInputDeviceType : int
     {
-        MOUSE    = 0,
+        MOUSE = 0,
         KEYBOARD = 1,
-        HID      = 2
+        HID = 2
     }
 
     /// <summary>
@@ -3199,65 +3177,65 @@ namespace OpenTK.Platform.Windows
         /*
          * Virtual Key, Standard Set
          */
-        LBUTTON      = 0x01,
-        RBUTTON      = 0x02,
-        CANCEL       = 0x03,
-        MBUTTON      = 0x04,   /* NOT contiguous with L & RBUTTON */
+        LBUTTON = 0x01,
+        RBUTTON = 0x02,
+        CANCEL = 0x03,
+        MBUTTON = 0x04,   /* NOT contiguous with L & RBUTTON */
 
-        XBUTTON1     = 0x05,   /* NOT contiguous with L & RBUTTON */
-        XBUTTON2     = 0x06,   /* NOT contiguous with L & RBUTTON */
+        XBUTTON1 = 0x05,   /* NOT contiguous with L & RBUTTON */
+        XBUTTON2 = 0x06,   /* NOT contiguous with L & RBUTTON */
 
         /*
          * 0x07 : unassigned
          */
 
-        BACK         = 0x08,
-        TAB          = 0x09,
+        BACK = 0x08,
+        TAB = 0x09,
 
         /*
          * 0x0A - 0x0B : reserved
          */
 
-        CLEAR        = 0x0C,
-        RETURN       = 0x0D,
+        CLEAR = 0x0C,
+        RETURN = 0x0D,
 
-        SHIFT        = 0x10,
-        CONTROL      = 0x11,
-        MENU         = 0x12,
-        PAUSE        = 0x13,
-        CAPITAL      = 0x14,
+        SHIFT = 0x10,
+        CONTROL = 0x11,
+        MENU = 0x12,
+        PAUSE = 0x13,
+        CAPITAL = 0x14,
 
-        KANA         = 0x15,
-        HANGEUL      = 0x15,  /* old name - should be here for compatibility */
-        HANGUL       = 0x15,
-        JUNJA        = 0x17,
-        FINAL        = 0x18,
-        HANJA        = 0x19,
-        KANJI        = 0x19,
+        KANA = 0x15,
+        HANGEUL = 0x15,  /* old name - should be here for compatibility */
+        HANGUL = 0x15,
+        JUNJA = 0x17,
+        FINAL = 0x18,
+        HANJA = 0x19,
+        KANJI = 0x19,
 
-        ESCAPE       = 0x1B,
+        ESCAPE = 0x1B,
 
-        CONVERT      = 0x1C,
-        NONCONVERT   = 0x1D,
-        ACCEPT       = 0x1E,
-        MODECHANGE   = 0x1F,
+        CONVERT = 0x1C,
+        NONCONVERT = 0x1D,
+        ACCEPT = 0x1E,
+        MODECHANGE = 0x1F,
 
-        SPACE        = 0x20,
-        PRIOR        = 0x21,
-        NEXT         = 0x22,
-        END          = 0x23,
-        HOME         = 0x24,
-        LEFT         = 0x25,
-        UP           = 0x26,
-        RIGHT        = 0x27,
-        DOWN         = 0x28,
-        SELECT       = 0x29,
-        PRINT        = 0x2A,
-        EXECUTE      = 0x2B,
-        SNAPSHOT     = 0x2C,
-        INSERT       = 0x2D,
-        DELETE       = 0x2E,
-        HELP         = 0x2F,
+        SPACE = 0x20,
+        PRIOR = 0x21,
+        NEXT = 0x22,
+        END = 0x23,
+        HOME = 0x24,
+        LEFT = 0x25,
+        UP = 0x26,
+        RIGHT = 0x27,
+        DOWN = 0x28,
+        SELECT = 0x29,
+        PRINT = 0x2A,
+        EXECUTE = 0x2B,
+        SNAPSHOT = 0x2C,
+        INSERT = 0x2D,
+        DELETE = 0x2E,
+        HELP = 0x2F,
 
         /*
          * 0 - 9 are the same as ASCII '0' - '9' (0x30 - 0x39)
@@ -3265,63 +3243,63 @@ namespace OpenTK.Platform.Windows
          * A - Z are the same as ASCII 'A' - 'Z' (0x41 - 0x5A)
          */
 
-        LWIN         = 0x5B,
-        RWIN         = 0x5C,
-        APPS         = 0x5D,
+        LWIN = 0x5B,
+        RWIN = 0x5C,
+        APPS = 0x5D,
 
         /*
          * 0x5E : reserved
          */
 
-        SLEEP        = 0x5F,
+        SLEEP = 0x5F,
 
-        NUMPAD0      = 0x60,
-        NUMPAD1      = 0x61,
-        NUMPAD2      = 0x62,
-        NUMPAD3      = 0x63,
-        NUMPAD4      = 0x64,
-        NUMPAD5      = 0x65,
-        NUMPAD6      = 0x66,
-        NUMPAD7      = 0x67,
-        NUMPAD8      = 0x68,
-        NUMPAD9      = 0x69,
-        MULTIPLY     = 0x6A,
-        ADD          = 0x6B,
-        SEPARATOR    = 0x6C,
-        SUBTRACT     = 0x6D,
-        DECIMAL      = 0x6E,
-        DIVIDE       = 0x6F,
-        F1           = 0x70,
-        F2           = 0x71,
-        F3           = 0x72,
-        F4           = 0x73,
-        F5           = 0x74,
-        F6           = 0x75,
-        F7           = 0x76,
-        F8           = 0x77,
-        F9           = 0x78,
-        F10          = 0x79,
-        F11          = 0x7A,
-        F12          = 0x7B,
-        F13          = 0x7C,
-        F14          = 0x7D,
-        F15          = 0x7E,
-        F16          = 0x7F,
-        F17          = 0x80,
-        F18          = 0x81,
-        F19          = 0x82,
-        F20          = 0x83,
-        F21          = 0x84,
-        F22          = 0x85,
-        F23          = 0x86,
-        F24          = 0x87,
+        NUMPAD0 = 0x60,
+        NUMPAD1 = 0x61,
+        NUMPAD2 = 0x62,
+        NUMPAD3 = 0x63,
+        NUMPAD4 = 0x64,
+        NUMPAD5 = 0x65,
+        NUMPAD6 = 0x66,
+        NUMPAD7 = 0x67,
+        NUMPAD8 = 0x68,
+        NUMPAD9 = 0x69,
+        MULTIPLY = 0x6A,
+        ADD = 0x6B,
+        SEPARATOR = 0x6C,
+        SUBTRACT = 0x6D,
+        DECIMAL = 0x6E,
+        DIVIDE = 0x6F,
+        F1 = 0x70,
+        F2 = 0x71,
+        F3 = 0x72,
+        F4 = 0x73,
+        F5 = 0x74,
+        F6 = 0x75,
+        F7 = 0x76,
+        F8 = 0x77,
+        F9 = 0x78,
+        F10 = 0x79,
+        F11 = 0x7A,
+        F12 = 0x7B,
+        F13 = 0x7C,
+        F14 = 0x7D,
+        F15 = 0x7E,
+        F16 = 0x7F,
+        F17 = 0x80,
+        F18 = 0x81,
+        F19 = 0x82,
+        F20 = 0x83,
+        F21 = 0x84,
+        F22 = 0x85,
+        F23 = 0x86,
+        F24 = 0x87,
 
         /*
          * 0x88 - 0x8F : unassigned
          */
 
-        NUMLOCK      = 0x90,
-        SCROLL       = 0x91,
+        NUMLOCK = 0x90,
+        SCROLL = 0x91,
 
         /*
          * NEC PC-9800 kbd definitions
@@ -3334,8 +3312,8 @@ namespace OpenTK.Platform.Windows
         OEM_FJ_JISHO = 0x92,  // 'Dictionary' key
         OEM_FJ_MASSHOU = 0x93,  // 'Unregister word' key
         OEM_FJ_TOUROKU = 0x94,  // 'Register word' key
-        OEM_FJ_LOYA  = 0x95,  // 'Left OYAYUBI' key
-        OEM_FJ_ROYA  = 0x96,  // 'Right OYAYUBI' key
+        OEM_FJ_LOYA = 0x95,  // 'Left OYAYUBI' key
+        OEM_FJ_ROYA = 0x96,  // 'Right OYAYUBI' key
 
         /*
          * 0x97 - 0x9F : unassigned
@@ -3346,44 +3324,44 @@ namespace OpenTK.Platform.Windows
          * Used only as parameters to GetAsyncKeyState() and GetKeyState().
          * No other API or message will distinguish left and right keys in this way.
          */
-        LSHIFT       = 0xA0,
-        RSHIFT       = 0xA1,
-        LCONTROL     = 0xA2,
-        RCONTROL     = 0xA3,
-        LMENU        = 0xA4,
-        RMENU        = 0xA5,
+        LSHIFT = 0xA0,
+        RSHIFT = 0xA1,
+        LCONTROL = 0xA2,
+        RCONTROL = 0xA3,
+        LMENU = 0xA4,
+        RMENU = 0xA5,
 
-        BROWSER_BACK      = 0xA6,
-        BROWSER_FORWARD   = 0xA7,
-        BROWSER_REFRESH   = 0xA8,
-        BROWSER_STOP      = 0xA9,
-        BROWSER_SEARCH    = 0xAA,
+        BROWSER_BACK = 0xA6,
+        BROWSER_FORWARD = 0xA7,
+        BROWSER_REFRESH = 0xA8,
+        BROWSER_STOP = 0xA9,
+        BROWSER_SEARCH = 0xAA,
         BROWSER_FAVORITES = 0xAB,
-        BROWSER_HOME      = 0xAC,
+        BROWSER_HOME = 0xAC,
 
-        VOLUME_MUTE       = 0xAD,
-        VOLUME_DOWN       = 0xAE,
-        VOLUME_UP         = 0xAF,
-        MEDIA_NEXT_TRACK  = 0xB0,
-        MEDIA_PREV_TRACK  = 0xB1,
-        MEDIA_STOP        = 0xB2,
-        MEDIA_PLAY_PAUSE  = 0xB3,
-        LAUNCH_MAIL       = 0xB4,
+        VOLUME_MUTE = 0xAD,
+        VOLUME_DOWN = 0xAE,
+        VOLUME_UP = 0xAF,
+        MEDIA_NEXT_TRACK = 0xB0,
+        MEDIA_PREV_TRACK = 0xB1,
+        MEDIA_STOP = 0xB2,
+        MEDIA_PLAY_PAUSE = 0xB3,
+        LAUNCH_MAIL = 0xB4,
         LAUNCH_MEDIA_SELECT = 0xB5,
-        LAUNCH_APP1       = 0xB6,
-        LAUNCH_APP2       = 0xB7,
+        LAUNCH_APP1 = 0xB6,
+        LAUNCH_APP2 = 0xB7,
 
         /*
          * 0xB8 - 0xB9 : reserved
          */
 
-        OEM_1        = 0xBA,   // ';:' for US
-        OEM_PLUS     = 0xBB,   // '+' any country
-        OEM_COMMA    = 0xBC,   // ',' any country
-        OEM_MINUS    = 0xBD,   // '-' any country
-        OEM_PERIOD   = 0xBE,   // '.' any country
-        OEM_2        = 0xBF,   // '/?' for US
-        OEM_3        = 0xC0,   // '`~' for US
+        OEM_1 = 0xBA,   // ';:' for US
+        OEM_PLUS = 0xBB,   // '+' any country
+        OEM_COMMA = 0xBC,   // ',' any country
+        OEM_MINUS = 0xBD,   // '-' any country
+        OEM_PERIOD = 0xBE,   // '.' any country
+        OEM_2 = 0xBF,   // '/?' for US
+        OEM_3 = 0xC0,   // '`~' for US
 
         /*
          * 0xC1 - 0xD7 : reserved
@@ -3393,11 +3371,11 @@ namespace OpenTK.Platform.Windows
          * 0xD8 - 0xDA : unassigned
          */
 
-        OEM_4        = 0xDB,  //  '[{' for US
-        OEM_5        = 0xDC,  //  '\|' for US
-        OEM_6        = 0xDD,  //  ']}' for US
-        OEM_7        = 0xDE,  //  ''"' for US
-        OEM_8        = 0xDF,
+        OEM_4 = 0xDB,  //  '[{' for US
+        OEM_5 = 0xDC,  //  '\|' for US
+        OEM_6 = 0xDD,  //  ']}' for US
+        OEM_7 = 0xDE,  //  ''"' for US
+        OEM_8 = 0xDF,
 
         /*
          * 0xE0 : reserved
@@ -3406,17 +3384,17 @@ namespace OpenTK.Platform.Windows
         /*
          * Various extended or enhanced keyboards
          */
-        OEM_AX       = 0xE1,  //  'AX' key on Japanese AX kbd
-        OEM_102      = 0xE2,  //  "<>" or "\|" on RT 102-key kbd.
-        ICO_HELP     = 0xE3,  //  Help key on ICO
-        ICO_00       = 0xE4,  //  00 key on ICO
+        OEM_AX = 0xE1,  //  'AX' key on Japanese AX kbd
+        OEM_102 = 0xE2,  //  "<>" or "\|" on RT 102-key kbd.
+        ICO_HELP = 0xE3,  //  Help key on ICO
+        ICO_00 = 0xE4,  //  00 key on ICO
 
-        PROCESSKEY   = 0xE5,
+        PROCESSKEY = 0xE5,
 
-        ICO_CLEAR    = 0xE6,
+        ICO_CLEAR = 0xE6,
 
 
-        PACKET       = 0xE7,
+        PACKET = 0xE7,
 
         /*
          * 0xE8 : unassigned
@@ -3425,29 +3403,29 @@ namespace OpenTK.Platform.Windows
         /*
          * Nokia/Ericsson definitions
          */
-        OEM_RESET    = 0xE9,
-        OEM_JUMP     = 0xEA,
-        OEM_PA1      = 0xEB,
-        OEM_PA2      = 0xEC,
-        OEM_PA3      = 0xED,
-        OEM_WSCTRL   = 0xEE,
-        OEM_CUSEL    = 0xEF,
-        OEM_ATTN     = 0xF0,
-        OEM_FINISH   = 0xF1,
-        OEM_COPY     = 0xF2,
-        OEM_AUTO     = 0xF3,
-        OEM_ENLW     = 0xF4,
-        OEM_BACKTAB  = 0xF5,
+        OEM_RESET = 0xE9,
+        OEM_JUMP = 0xEA,
+        OEM_PA1 = 0xEB,
+        OEM_PA2 = 0xEC,
+        OEM_PA3 = 0xED,
+        OEM_WSCTRL = 0xEE,
+        OEM_CUSEL = 0xEF,
+        OEM_ATTN = 0xF0,
+        OEM_FINISH = 0xF1,
+        OEM_COPY = 0xF2,
+        OEM_AUTO = 0xF3,
+        OEM_ENLW = 0xF4,
+        OEM_BACKTAB = 0xF5,
 
-        ATTN         = 0xF6,
-        CRSEL        = 0xF7,
-        EXSEL        = 0xF8,
-        EREOF        = 0xF9,
-        PLAY         = 0xFA,
-        ZOOM         = 0xFB,
-        NONAME       = 0xFC,
-        PA1          = 0xFD,
-        OEM_CLEAR    = 0xFE,
+        ATTN = 0xF6,
+        CRSEL = 0xF7,
+        EXSEL = 0xF8,
+        EREOF = 0xF9,
+        PLAY = 0xFA,
+        ZOOM = 0xFB,
+        NONAME = 0xFC,
+        PA1 = 0xFD,
+        OEM_CLEAR = 0xFE,
 
         Last
     }
@@ -3492,35 +3470,35 @@ namespace OpenTK.Platform.Windows
         /// <summary>
         /// A WM_KEYUP, WM_KEYDOWN, WM_SYSKEYUP, or WM_SYSKEYDOWN message is in the queue.
         /// </summary>
-        KEY            = 0x0001,
+        KEY = 0x0001,
         /// <summary>
         /// A WM_MOUSEMOVE message is in the queue.
         /// </summary>
-        MOUSEMOVE      = 0x0002,
+        MOUSEMOVE = 0x0002,
         /// <summary>
         /// A mouse-button message (WM_LBUTTONUP, WM_RBUTTONDOWN, and so on).
         /// </summary>
-        MOUSEBUTTON    = 0x0004,
+        MOUSEBUTTON = 0x0004,
         /// <summary>
         /// A posted message (other than those listed here) is in the queue.
         /// </summary>
-        POSTMESSAGE    = 0x0008,
+        POSTMESSAGE = 0x0008,
         /// <summary>
         /// A WM_TIMER message is in the queue.
         /// </summary>
-        TIMER          = 0x0010,
+        TIMER = 0x0010,
         /// <summary>
         /// A WM_PAINT message is in the queue.
         /// </summary>
-        PAINT          = 0x0020,
+        PAINT = 0x0020,
         /// <summary>
         /// A message sent by another thread or application is in the queue.
         /// </summary>
-        SENDMESSAGE    = 0x0040,
+        SENDMESSAGE = 0x0040,
         /// <summary>
         /// A WM_HOTKEY message is in the queue.
         /// </summary>
-        HOTKEY         = 0x0080,
+        HOTKEY = 0x0080,
         /// <summary>
         /// A posted message (other than those listed here) is in the queue.
         /// </summary>
@@ -3529,29 +3507,29 @@ namespace OpenTK.Platform.Windows
         /// A raw input message is in the queue. For more information, see Raw Input.
         /// Windows XP and higher only.
         /// </summary>
-        RAWINPUT       = 0x0400,
+        RAWINPUT = 0x0400,
         /// <summary>
         /// A WM_MOUSEMOVE message or mouse-button message (WM_LBUTTONUP, WM_RBUTTONDOWN, and so on).
         /// </summary>
-        MOUSE          = MOUSEMOVE | MOUSEBUTTON,
+        MOUSE = MOUSEMOVE | MOUSEBUTTON,
         /// <summary>
         /// An input message is in the queue. This is composed of KEY, MOUSE and RAWINPUT.
         /// Windows XP and higher only.
         /// </summary>
-        INPUT          = MOUSE | KEY | RAWINPUT,
+        INPUT = MOUSE | KEY | RAWINPUT,
         /// <summary>
         /// An input message is in the queue. This is composed of QS_KEY and QS_MOUSE.
         /// Windows 2000 and earlier.
         /// </summary>
-        INPUT_LEGACY   = MOUSE | KEY,
+        INPUT_LEGACY = MOUSE | KEY,
         /// <summary>
         /// An input, WM_TIMER, WM_PAINT, WM_HOTKEY, or posted message is in the queue.
         /// </summary>
-        ALLEVENTS      = INPUT | POSTMESSAGE | TIMER | PAINT | HOTKEY,
+        ALLEVENTS = INPUT | POSTMESSAGE | TIMER | PAINT | HOTKEY,
         /// <summary>
         /// Any message is in the queue.
         /// </summary>
-        ALLINPUT       = INPUT | POSTMESSAGE | TIMER | PAINT | HOTKEY | SENDMESSAGE
+        ALLINPUT = INPUT | POSTMESSAGE | TIMER | PAINT | HOTKEY | SENDMESSAGE
     }
 
     internal enum WindowMessage : int
@@ -3660,15 +3638,15 @@ namespace OpenTK.Platform.Windows
         /// <summary>
         /// Windows 2000 and higher only.
         /// </summary>
-        NCXBUTTONDOWN    = 0x00ab,
+        NCXBUTTONDOWN = 0x00ab,
         /// <summary>
         /// Windows 2000 and higher only.
         /// </summary>
-        NCXBUTTONUP      = 0x00ac,
+        NCXBUTTONUP = 0x00ac,
         /// <summary>
         /// Windows 2000 and higher only.
         /// </summary>
-        NCXBUTTONDBLCLK  = 0x00ad,
+        NCXBUTTONDBLCLK = 0x00ad,
 
         INPUT = 0x00FF,
 
@@ -3682,6 +3660,10 @@ namespace OpenTK.Platform.Windows
         SYSCHAR = 0x0106,
         SYSDEADCHAR = 0x0107,
         KEYLAST = 0x0108,
+        UNICHAR = 0x0109,
+
+
+
         IME_STARTCOMPOSITION = 0x010D,
         IME_ENDCOMPOSITION = 0x010E,
         IME_COMPOSITION = 0x010F,
@@ -3731,15 +3713,15 @@ namespace OpenTK.Platform.Windows
         /// <summary>
         /// Windows 2000 and higher only.
         /// </summary>
-        XBUTTONDOWN        = 0x020B,
+        XBUTTONDOWN = 0x020B,
         /// <summary>
         /// Windows 2000 and higher only.
         /// </summary>
-        XBUTTONUP        = 0x020C,
+        XBUTTONUP = 0x020C,
         /// <summary>
         /// Windows 2000 and higher only.
         /// </summary>
-        XBUTTONDBLCLK    = 0x020D,
+        XBUTTONDBLCLK = 0x020D,
         /// <summary>
         /// Windows Vista and higher only.
         /// </summary>
@@ -3847,33 +3829,33 @@ namespace OpenTK.Platform.Windows
         /// <summary>
         /// Hides the window and activates another window.
         /// </summary>
-        HIDE            = 0,
+        HIDE = 0,
         /// <summary>
         /// Activates and displays a window. If the window is minimized or maximized, the system restores it to its original size and position. An application should specify this flag when displaying the window for the first time.
         /// </summary>
-        SHOWNORMAL      = 1,
-        NORMAL          = 1,
+        SHOWNORMAL = 1,
+        NORMAL = 1,
         /// <summary>
         /// Activates the window and displays it as a minimized window.
         /// </summary>
-        SHOWMINIMIZED   = 2,
+        SHOWMINIMIZED = 2,
         /// <summary>
         /// Activates the window and displays it as a maximized window.
         /// </summary>
-        SHOWMAXIMIZED   = 3,
-        MAXIMIZE        = 3,
+        SHOWMAXIMIZED = 3,
+        MAXIMIZE = 3,
         /// <summary>
         /// Displays the window as a minimized window. This value is similar to SW_SHOWMINIMIZED, except the window is not activated.
         /// </summary>
-        SHOWNOACTIVATE  = 4,
+        SHOWNOACTIVATE = 4,
         /// <summary>
         /// Activates the window and displays it in its current size and position.
         /// </summary>
-        SHOW            = 5,
+        SHOW = 5,
         /// <summary>
         /// Minimizes the specified window and activates the next top-level window in the Z order.
         /// </summary>
-        MINIMIZE        = 6,
+        MINIMIZE = 6,
         /// <summary>
         /// Displays the window as a minimized window. This value is similar to SW_SHOWMINIMIZED, except the window is not activated.
         /// </summary>
@@ -3881,19 +3863,19 @@ namespace OpenTK.Platform.Windows
         /// <summary>
         /// Displays the window in its current size and position. This value is similar to SW_SHOW, except the window is not activated.
         /// </summary>
-        SHOWNA          = 8,
+        SHOWNA = 8,
         /// <summary>
         /// Activates and displays the window. If the window is minimized or maximized, the system restores it to its original size and position. An application should specify this flag when restoring a minimized window.
         /// </summary>
-        RESTORE         = 9,
+        RESTORE = 9,
         /// <summary>
         /// Sets the show state based on the SW_ value specified in the STARTUPINFO structure passed to the CreateProcess function by the program that started the application.
         /// </summary>
-        SHOWDEFAULT     = 10,
+        SHOWDEFAULT = 10,
         /// <summary>
         /// Windows 2000/XP: Minimizes a window, even if the thread that owns the window is not responding. This flag should only be used when minimizing windows from a different thread.
         /// </summary>
-        FORCEMINIMIZE   = 11,
+        FORCEMINIMIZE = 11,
         //MAX             = 11,
 
         // Old ShowWindow() Commands

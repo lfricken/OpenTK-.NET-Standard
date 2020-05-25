@@ -462,4 +462,3 @@ namespace OpenTK.Platform
         }
     }
 }
-
